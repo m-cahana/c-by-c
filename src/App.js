@@ -1,22 +1,54 @@
 import React from "react";
+import { supabase, isSupabaseConfigured } from "./supabase";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import AdminUpload from "./components/AdminUpload";
 import "./App.css";
 
-function usePuz(url) {
+async function fetchLatestSupabasePuz() {
+  if (!isSupabaseConfigured() || !supabase) return null;
+  const { data, error } = await supabase.storage
+    .from("puzzles")
+    .list("", { limit: 100 });
+  if (error) throw error;
+  if (!data || data.length === 0) return null;
+  const candidates = data
+    .filter((f) => f.name && f.name.toLowerCase().endsWith(".puz"))
+    .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+  const latest = candidates[0] || data[0];
+  const { data: file, error: dlError } = await supabase.storage
+    .from("puzzles")
+    .download(latest.name);
+  if (dlError) throw dlError;
+  const arrayBuffer = await file.arrayBuffer();
+  return { arrayBuffer, name: latest.name };
+}
+
+function useLatestPuzzle(fallbackUrl) {
   const [puzzle, setPuzzle] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [reloadKey, setReloadKey] = React.useState(0);
 
   React.useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
         setLoading(true);
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Failed to load puzzle: ${res.status}`);
-        const arrayBuffer = await res.arrayBuffer();
         const { decode } = require("puzjs");
-        const data = decode(arrayBuffer);
-        if (!cancelled) setPuzzle(data);
+        let decoded = null;
+        try {
+          const latest = await fetchLatestSupabasePuz();
+          if (latest) {
+            decoded = decode(latest.arrayBuffer);
+          }
+        } catch (supaErr) {}
+        if (!decoded) {
+          const res = await fetch(fallbackUrl);
+          if (!res.ok) throw new Error(`Failed to load puzzle: ${res.status}`);
+          const arrayBuffer = await res.arrayBuffer();
+          decoded = decode(arrayBuffer);
+        }
+        if (!cancelled) setPuzzle(decoded);
       } catch (e) {
         if (!cancelled) setError(e);
       } finally {
@@ -27,9 +59,13 @@ function usePuz(url) {
     return () => {
       cancelled = true;
     };
-  }, [url]);
+  }, [fallbackUrl, reloadKey]);
 
-  return { puzzle, error, loading };
+  function reload() {
+    setReloadKey((k) => k + 1);
+  }
+
+  return { puzzle, error, loading, reload };
 }
 
 function computeNumbering(puzzle) {
@@ -114,6 +150,8 @@ function ClueList({ title, entries, currentNumber, onSelect }) {
   );
 }
 
+// AdminUpload moved to ./components/AdminUpload.jsx
+
 function CrosswordGrid({ puzzle }) {
   const rows = puzzle.grid.length;
   const cols = puzzle.grid[0].length;
@@ -145,7 +183,6 @@ function CrosswordGrid({ puzzle }) {
     return puzzle.grid.map((row) => row.map((ch) => false));
   });
 
-  // selection state
   const initialAcross = numbering.across[0];
   const [dir, setDir] = React.useState("across");
   const [clueNumber, setClueNumber] = React.useState(
@@ -290,7 +327,6 @@ function CrosswordGrid({ puzzle }) {
   function handleCellClick(r, c) {
     const numAcross = numbering.acrossNumAt[r][c];
     const numDown = numbering.downNumAt[r][c];
-    // Single click: select the cell keeping current direction if possible
     if (pos.r === r && pos.c === c) {
       if (dir === "across") {
         if (numAcross) setSelectionByNumber("across", numAcross);
@@ -302,7 +338,6 @@ function CrosswordGrid({ puzzle }) {
         else setPos({ r, c });
       }
     } else {
-      // Different cell: prefer current direction if available, otherwise fallback
       const preferNum = dir === "across" ? numAcross : numDown;
       if (preferNum) setSelectionByNumber(dir, preferNum);
       else if (numAcross) setSelectionByNumber("across", numAcross);
@@ -325,9 +360,6 @@ function CrosswordGrid({ puzzle }) {
     return entry ? entry.positions : [];
   }, [dir, clueNumber, numbering]);
 
-  // deprecated single-button actions removed in favor of variants
-
-  // Check/Reveal helpers and variants
   function checkCells(positions) {
     const nextIncorrect = incorrect.map((row) => row.slice());
     positions.forEach(({ r, c }) => {
@@ -499,18 +531,45 @@ function CrosswordGrid({ puzzle }) {
   );
 }
 
-function App() {
-  const { puzzle, error, loading } = usePuz("/C by C 1.puz");
-
+function MainPage() {
+  const { puzzle, error, loading } = useLatestPuzzle("/C by C 1.puz");
   if (loading) return <div className="status">Loading puzzle…</div>;
   if (error) return <div className="status error">{String(error)}</div>;
   if (!puzzle) return null;
-
   return (
     <div className="App">
       <h1 className="title">{puzzle.meta?.title || "Crossword"}</h1>
       <CrosswordGrid puzzle={puzzle} />
     </div>
+  );
+}
+
+function AdminPage() {
+  return (
+    <div className="App">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1 className="title">Admin</h1>
+        <Link to="/">Back to puzzle</Link>
+      </div>
+      <AdminUpload onUploaded={undefined} />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

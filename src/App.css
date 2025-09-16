@@ -19,6 +19,8 @@
 
 .crossword {
   width: 100%;
+  max-width: 100vmin;
+  margin: 0 auto;
 }
 
 .toolbar {
@@ -42,11 +44,81 @@
   margin-right: 2px;
 }
 
+.admin-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+.admin-upload.drag {
+  background: #f8fafc;
+}
+
+.admin-label {
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-status {
+  font-size: 12px;
+  color: #475569;
+}
+
+.admin-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 16px auto;
+}
+
+.admin-input {
+  font-size: 18px;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  min-width: 260px;
+}
+
+.admin-button {
+  font-size: 18px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 0;
+  background: #0a2e28;
+  color: #fff;
+  cursor: pointer;
+}
+.admin-button:hover {
+  filter: brightness(1.05);
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-button--primary {
+  font-size: 18px;
+  padding: 12px 18px;
+}
+
+.admin-button--secondary {
+  background: #475569;
+}
+
 .grid {
   display: grid;
   gap: 2px;
   background: #999;
   aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto;
 }
 
 .cell {
