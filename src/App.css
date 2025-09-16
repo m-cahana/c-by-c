@@ -1,0 +1,146 @@
+.App {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.title {
+  font-size: 20px;
+  margin: 12px 0 20px;
+}
+
+.status {
+  padding: 16px;
+}
+
+.status.error {
+  color: #b00020;
+}
+
+.crossword {
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.button-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.group-label {
+  font-size: 12px;
+  color: #475569;
+  margin-right: 2px;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+  background: #999;
+  aspect-ratio: 1 / 1;
+}
+
+.cell {
+  background: #fff;
+  position: relative;
+}
+
+.cell.block {
+  background: #0a2e28; /* from Figma palette */
+}
+
+.cell.active {
+  background: #a98484; /* selected answer tiles */
+}
+
+.cell.current {
+  background: #d41c57; /* focused cell */
+}
+
+.cell.incorrect {
+  background: #ffe5e5;
+}
+
+.cell-number {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+.cell-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1;
+  background: transparent;
+  caret-color: transparent; /* hide blinking text cursor */
+}
+
+.cell-input::selection {
+  background: transparent; /* no selection highlight */
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr minmax(240px, 320px);
+  gap: 16px;
+}
+
+.clues {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 12px;
+}
+
+.clue-title {
+  font-size: 16px;
+  margin: 0 0 4px;
+}
+
+.clue-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.clue {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.clue:hover {
+  background: #f1f5f9;
+}
+
+.clue.selected {
+  background: #e8f0fe;
+}
+
+.clue-number {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
