@@ -4,6 +4,10 @@
   padding: 16px;
 }
 
+.content-top {
+  display: block;
+}
+
 .title {
   font-size: 40px;
   margin: 12px 0 20px;
@@ -321,6 +325,15 @@
 }
 
 @media (max-width: 800px) {
+  .content-top {
+    height: auto;
+    min-height: 65vh;
+    min-height: 65svh;
+    min-height: 65dvh;
+    overflow: auto;
+    padding-bottom: calc(35vh + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+  }
   .layout {
     grid-template-columns: 1fr;
   }
@@ -345,26 +358,44 @@
   }
 
   .mobile-keyboard {
-    position: sticky;
+    position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
-    margin-top: 8px;
-    padding: 6px;
-    border-radius: 10px;
+    height: 35vh;
+    height: 35svh;
+    height: 35dvh;
+    padding: 14px 8px;
     background: #0a2e28;
     color: #fff;
     user-select: none;
-    width: 100%;
     box-sizing: border-box;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1000;
   }
   .mobile-keyboard-row {
     display: flex;
     gap: clamp(3px, 1.5vw, 6px);
     justify-content: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    align-items: stretch;
+    flex: 1 1 0;
   }
   .mobile-keyboard-row:last-child {
     margin-bottom: 0;
     gap: clamp(2px, 1vw, 4px);
+  }
+  .mobile-keyboard-row.row-10 .mobile-key {
+    flex-basis: calc((100% - (9 * clamp(3px, 1.5vw, 6px))) / 10);
+    max-width: calc((100% - (9 * clamp(3px, 1.5vw, 6px))) / 10);
+  }
+  .mobile-keyboard-row.row-9 .mobile-key {
+    flex-basis: calc((100% - (8 * clamp(3px, 1.5vw, 6px))) / 9);
+    max-width: calc((100% - (8 * clamp(3px, 1.5vw, 6px))) / 9);
   }
   .mobile-key {
     appearance: none;
@@ -372,26 +403,26 @@
     border: 0;
     background: #11463e;
     color: #fff;
-    padding: clamp(6px, 1.6vw, 10px) clamp(8px, 2.6vw, 12px);
+    padding: 0 clamp(8px, 2.6vw, 12px);
     border-radius: 8px;
-    font-size: clamp(12px, 4.2vw, 16px);
+    font-size: clamp(16px, 3vh, 22px);
     line-height: 1;
-    min-width: clamp(24px, 7vw, 34px);
+    min-width: 0;
     text-align: center;
-    flex: 0 1 auto;
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .mobile-key--action {
     background: #1d6781;
   }
   .mobile-key--wide {
-    min-width: clamp(46px, 18vw, 64px);
-    padding-left: clamp(6px, 1.6vw, 9px);
-    padding-right: clamp(6px, 1.6vw, 9px);
+    flex: 1.2 1 0;
   }
   .mobile-key--del {
-    min-width: clamp(26px, 8vw, 36px);
-    padding-left: clamp(4px, 1.2vw, 7px);
-    padding-right: clamp(4px, 1.2vw, 7px);
+    flex: 1 1 0;
   }
 }
 
@@ -418,13 +449,13 @@
 
 @media (max-width: 560px) {
   .crossword {
-    max-width: 92vw;
+    max-width: 88vw;
   }
   .grid {
     gap: 1px;
   }
   .cell-input {
-    font-size: clamp(14px, 6vw, 22px);
+    font-size: clamp(13px, 5.5vw, 21px);
   }
   .cell-number {
     font-size: 0.8rem;

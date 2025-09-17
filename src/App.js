@@ -859,8 +859,10 @@ function MainPage() {
   if (!puzzle) return null;
   return (
     <div className="App">
-      <h1 className="title">{puzzle.meta?.title || "Crossword"}</h1>
-      <CrosswordGrid puzzle={puzzle} />
+      <div className="content-top">
+        <h1 className="title">{puzzle.meta?.title || "Crossword"}</h1>
+        <CrosswordGrid puzzle={puzzle} />
+      </div>
     </div>
   );
 }

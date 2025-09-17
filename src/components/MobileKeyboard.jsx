@@ -39,13 +39,13 @@ export default function MobileKeyboard({
     >
       {symbols ? (
         <>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-10">
             {sym1.map((k) => renderKey(k, () => onChar && onChar(k)))}
           </div>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-10">
             {sym2.map((k) => renderKey(k, () => onChar && onChar(k)))}
           </div>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-9">
             {renderKey(
               "ABC",
               () => setSymbols(false),
@@ -61,13 +61,13 @@ export default function MobileKeyboard({
         </>
       ) : (
         <>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-10">
             {row1.map((k) => renderKey(k, () => onChar && onChar(k)))}
           </div>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-9">
             {row2.map((k) => renderKey(k, () => onChar && onChar(k)))}
           </div>
-          <div className="mobile-keyboard-row">
+          <div className="mobile-keyboard-row row-9">
             {renderKey(
               "123",
               () => setSymbols(true),
