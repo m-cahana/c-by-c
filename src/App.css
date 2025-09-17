@@ -5,12 +5,21 @@
 }
 
 .title {
-  font-size: 20px;
+  font-size: 40px;
   margin: 12px 0 20px;
+  text-align: center;
 }
 
 .status {
   padding: 16px;
+}
+
+.status.centered {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
 }
 
 .status.error {
@@ -112,6 +121,26 @@
   background: #475569;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  color: #0a2e28;
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
 .grid {
   display: grid;
   gap: 2px;
@@ -177,10 +206,11 @@
   display: grid;
   grid-auto-rows: min-content;
   gap: 12px;
+  grid-template-columns: 1fr;
 }
 
 .clue-title {
-  font-size: 16px;
+  font-size: 14px;
   margin: 0 0 4px;
 }
 
@@ -196,6 +226,7 @@
   padding: 6px 8px;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .clue:hover {
@@ -214,5 +245,39 @@
 @media (max-width: 800px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .crossword {
+    max-width: 92vw;
+  }
+  .grid {
+    gap: 1px;
+  }
+  .cell-input {
+    font-size: clamp(14px, 6vw, 22px);
+  }
+  .cell-number {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .App {
+    max-width: 1280px;
+  }
+  .layout {
+    grid-template-columns: minmax(420px, 1fr) minmax(480px, 1.2fr);
+    gap: 20px;
+  }
+  .clues {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 16px;
+  }
+  .crossword {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
