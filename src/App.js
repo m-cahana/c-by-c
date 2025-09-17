@@ -533,7 +533,7 @@ function CrosswordGrid({ puzzle }) {
 
 function MainPage() {
   const { puzzle, error, loading } = useLatestPuzzle("/C by C 1.puz");
-  if (loading) return <div className="status">Loading puzzle…</div>;
+  if (loading) return <div className="status centered">Loading puzzle…</div>;
   if (error) return <div className="status error">{String(error)}</div>;
   if (!puzzle) return null;
   return (
