@@ -234,7 +234,8 @@
 }
 
 .clue.selected {
-  background: #e8f0fe;
+  background: #1d6781;
+  color: #fff;
 }
 
 .clue-number {
