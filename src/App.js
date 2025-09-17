@@ -189,7 +189,7 @@ function CrosswordGrid({ puzzle }) {
     () => `${storageKey}-timerStart`,
     [storageKey]
   );
-  const [startTs] = React.useState(() => {
+  const [startTs, setStartTs] = React.useState(() => {
     try {
       const raw = localStorage.getItem(timerKey);
       if (raw) {
@@ -204,10 +204,12 @@ function CrosswordGrid({ puzzle }) {
     }
   });
   const [nowTs, setNowTs] = React.useState(Date.now());
+  const [timerRunning, setTimerRunning] = React.useState(true);
   React.useEffect(() => {
+    if (!timerRunning) return;
     const id = setInterval(() => setNowTs(Date.now()), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [timerRunning]);
   const elapsedMs = nowTs - startTs;
   function formatElapsed(ms) {
     const totalSec = Math.max(0, Math.floor(ms / 1000));
@@ -218,6 +220,34 @@ function CrosswordGrid({ puzzle }) {
     const ss = String(s).padStart(2, "0");
     return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
   }
+
+  // Completion state
+  const [completed, setCompleted] = React.useState(false);
+  const [showCongrats, setShowCongrats] = React.useState(false);
+
+  function isSolved() {
+    for (let rr = 0; rr < rows; rr += 1) {
+      for (let cc = 0; cc < cols; cc += 1) {
+        if (puzzle.grid[rr][cc] === ".") continue;
+        const sol =
+          typeof puzzle.grid[rr][cc] === "string"
+            ? puzzle.grid[rr][cc]
+            : puzzle.grid[rr][cc]?.solution || "";
+        const val = (cells[rr][cc] || "").toUpperCase();
+        if (val !== sol.toUpperCase()) return false;
+      }
+    }
+    return true;
+  }
+
+  React.useEffect(() => {
+    if (!completed && isSolved()) {
+      setCompleted(true);
+      setTimerRunning(false);
+      setShowCongrats(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cells]);
 
   // Dot menu state
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -624,6 +654,12 @@ function CrosswordGrid({ puzzle }) {
       }
     }
     revealCells(all);
+    // After reveal-all, consider puzzle complete
+    setTimeout(() => {
+      setCompleted(true);
+      setTimerRunning(false);
+      setShowCongrats(true);
+    }, 0);
   }
 
   function clearPuzzle() {
@@ -634,6 +670,14 @@ function CrosswordGrid({ puzzle }) {
     try {
       localStorage.removeItem(storageKey);
     } catch {}
+    const t = Date.now();
+    try {
+      localStorage.setItem(timerKey, String(t));
+    } catch {}
+    setStartTs(t);
+    setTimerRunning(true);
+    setCompleted(false);
+    setShowCongrats(false);
   }
 
   return (
@@ -823,6 +867,23 @@ function CrosswordGrid({ puzzle }) {
               {dir === "across" ? "Across" : "Down"} {clueNumber}.
             </span>
             {currentEntry?.clue || ""}
+          </div>
+        )}
+        {showCongrats && (
+          <div
+            className="modal-backdrop"
+            onClick={() => setShowCongrats(false)}
+          >
+            <div className="modal" role="dialog" aria-modal="true">
+              <h3 style={{ marginTop: 0 }}>Good work!</h3>
+              <p>You've completed the puzzle in {formatElapsed(elapsedMs)}.</p>
+              <button
+                className="admin-button"
+                onClick={() => setShowCongrats(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
         {isSmallScreen && (
