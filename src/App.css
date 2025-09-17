@@ -156,19 +156,19 @@
 }
 
 .cell.block {
-  background: #0a2e28; /* from Figma palette */
+  background: #280f06; /* from Figma palette */
 }
 
 .cell.active {
-  background: #a98484; /* selected answer tiles */
+  background: #f9e0d7; /* selected answer tiles */
 }
 
 .cell.current {
-  background: #d41c57; /* focused cell */
+  background: #1d6781; /* focused cell */
 }
 
 .cell.incorrect {
-  background: #ffe5e5;
+  background: #b02747;
 }
 
 .cell-number {
