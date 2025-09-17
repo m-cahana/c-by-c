@@ -360,6 +360,11 @@ function CrosswordGrid({ puzzle }) {
     return entry ? entry.positions : [];
   }, [dir, clueNumber, numbering]);
 
+  const currentEntry = React.useMemo(() => {
+    const list = dir === "across" ? numbering.across : numbering.down;
+    return list.find((e) => e.number === clueNumber) || null;
+  }, [dir, clueNumber, numbering]);
+
   function checkCells(positions) {
     const nextIncorrect = incorrect.map((row) => row.slice());
     positions.forEach(({ r, c }) => {
@@ -512,6 +517,14 @@ function CrosswordGrid({ puzzle }) {
             })
           )}
         </div>
+        {clueNumber && (
+          <div className="mobile-clue-banner">
+            <span className="clue-dir">
+              {dir === "across" ? "Across" : "Down"} {clueNumber}.
+            </span>
+            {currentEntry?.clue || ""}
+          </div>
+        )}
       </div>
       <div className="clues">
         <ClueList

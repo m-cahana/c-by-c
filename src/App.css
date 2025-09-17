@@ -243,9 +243,36 @@
   margin-right: 6px;
 }
 
+.mobile-clue-banner {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+  }
+  .toolbar .button-group:nth-child(2) {
+    flex-basis: 100%;
+    margin-top: 6px;
+  }
+  .clues {
+    display: none;
+  }
+  .mobile-clue-banner {
+    display: block;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #0a2e28;
+    color: #fff;
+    font-size: 16px;
+  }
+  .mobile-clue-banner .clue-dir {
+    font-weight: 700;
+    margin-right: 6px;
   }
 }
 
