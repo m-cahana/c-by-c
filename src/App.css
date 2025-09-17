@@ -32,10 +32,78 @@
   margin: 0 auto;
 }
 
-.toolbar {
+.topbar {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   margin-bottom: 8px;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: #0a2e28;
+}
+
+.dotmenu {
+  position: relative;
+}
+
+.dot-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 0;
+  background: #000;
+  cursor: pointer;
+}
+
+.dotmenu-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  background: #fff;
+  color: #0a2e28;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  min-width: 180px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.dotmenu-view {
+  display: grid;
+  padding: 6px;
+}
+
+.dotmenu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+}
+.dotmenu-item:hover {
+  background: #f8fafc;
+}
+.dotmenu-danger {
+  color: #b00020;
+}
+.dotmenu-caret {
+  color: #64748b;
+}
+.dotmenu-back {
+  background: none;
+  border: 0;
+  color: #64748b;
+  text-align: left;
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 .button-group {
@@ -171,6 +239,11 @@
   background: #b02747;
 }
 
+/* If a cell is both incorrect and current, show current color */
+.cell.incorrect.current {
+  background: #1d6781;
+}
+
 .cell-number {
   position: absolute;
   top: 2px;
@@ -251,12 +324,8 @@
   .layout {
     grid-template-columns: 1fr;
   }
-  .toolbar {
-    flex-wrap: wrap;
-  }
-  .toolbar .button-group:nth-child(2) {
-    flex-basis: 100%;
-    margin-top: 6px;
+  .topbar {
+    gap: 8px;
   }
   .clues {
     display: none;
@@ -273,6 +342,77 @@
   .mobile-clue-banner .clue-dir {
     font-weight: 700;
     margin-right: 6px;
+  }
+
+  .mobile-keyboard {
+    position: sticky;
+    bottom: 0;
+    margin-top: 8px;
+    padding: 6px;
+    border-radius: 10px;
+    background: #0a2e28;
+    color: #fff;
+    user-select: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mobile-keyboard-row {
+    display: flex;
+    gap: clamp(3px, 1.5vw, 6px);
+    justify-content: center;
+    margin-bottom: 6px;
+  }
+  .mobile-keyboard-row:last-child {
+    margin-bottom: 0;
+    gap: clamp(2px, 1vw, 4px);
+  }
+  .mobile-key {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    background: #11463e;
+    color: #fff;
+    padding: clamp(6px, 1.6vw, 10px) clamp(8px, 2.6vw, 12px);
+    border-radius: 8px;
+    font-size: clamp(12px, 4.2vw, 16px);
+    line-height: 1;
+    min-width: clamp(24px, 7vw, 34px);
+    text-align: center;
+    flex: 0 1 auto;
+  }
+  .mobile-key--action {
+    background: #1d6781;
+  }
+  .mobile-key--wide {
+    min-width: clamp(46px, 18vw, 64px);
+    padding-left: clamp(6px, 1.6vw, 9px);
+    padding-right: clamp(6px, 1.6vw, 9px);
+  }
+  .mobile-key--del {
+    min-width: clamp(26px, 8vw, 36px);
+    padding-left: clamp(4px, 1.2vw, 7px);
+    padding-right: clamp(4px, 1.2vw, 7px);
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-keyboard {
+    padding: 4px;
+  }
+  .mobile-keyboard-row {
+    margin-bottom: 4px;
+  }
+  .mobile-key {
+    font-size: 11px;
+    padding: 5px 6px;
+    min-width: 24px;
+    border-radius: 6px;
+  }
+  .mobile-key--wide {
+    min-width: 44px;
+  }
+  .mobile-key--del {
+    min-width: 24px;
   }
 }
 

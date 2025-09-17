@@ -1,4 +1,5 @@
 import React from "react";
+import MobileKeyboard from "./components/MobileKeyboard";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
@@ -183,6 +184,63 @@ function CrosswordGrid({ puzzle }) {
     return puzzle.grid.map((row) => row.map((ch) => false));
   });
 
+  // Timer persistence per puzzle
+  const timerKey = React.useMemo(
+    () => `${storageKey}-timerStart`,
+    [storageKey]
+  );
+  const [startTs] = React.useState(() => {
+    try {
+      const raw = localStorage.getItem(timerKey);
+      if (raw) {
+        const parsed = parseInt(raw, 10);
+        if (!Number.isNaN(parsed)) return parsed;
+      }
+      const t = Date.now();
+      localStorage.setItem(timerKey, String(t));
+      return t;
+    } catch {
+      return Date.now();
+    }
+  });
+  const [nowTs, setNowTs] = React.useState(Date.now());
+  React.useEffect(() => {
+    const id = setInterval(() => setNowTs(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const elapsedMs = nowTs - startTs;
+  function formatElapsed(ms) {
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    const mm = h > 0 ? String(m).padStart(2, "0") : String(m);
+    const ss = String(s).padStart(2, "0");
+    return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+  }
+
+  // Dot menu state
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuView, setMenuView] = React.useState("root"); // root | check | reveal
+  const menuRef = React.useRef(null);
+  function toggleMenu() {
+    setMenuOpen((v) => !v);
+    setMenuView("root");
+  }
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    function onDocDown(e) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(e.target)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onDocDown);
+    document.addEventListener("touchstart", onDocDown);
+    return () => {
+      document.removeEventListener("mousedown", onDocDown);
+      document.removeEventListener("touchstart", onDocDown);
+    };
+  }, [menuOpen]);
+
   const initialAcross = numbering.across[0];
   const [dir, setDir] = React.useState("across");
   const [clueNumber, setClueNumber] = React.useState(
@@ -192,10 +250,29 @@ function CrosswordGrid({ puzzle }) {
     numbering.down[0]?.positions[0] || { r: 0, c: 0 };
   const [pos, setPos] = React.useState(initialPos);
 
+  const [isSmallScreen, setIsSmallScreen] = React.useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia && window.matchMedia("(max-width: 800px)").matches
+      : false
+  );
+
   React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 800px)");
+    const onChange = () => setIsSmallScreen(mq.matches);
+    if (mq.addEventListener) mq.addEventListener("change", onChange);
+    else mq.addListener && mq.addListener(onChange);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", onChange);
+      else mq.removeListener && mq.removeListener(onChange);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (isSmallScreen) return; // avoid focusing inputs on mobile
     const el = inputsRef.current[pos.r]?.[pos.c];
     if (el) el.focus();
-  }, [pos]);
+  }, [pos, isSmallScreen]);
 
   React.useEffect(() => {
     try {
@@ -208,15 +285,18 @@ function CrosswordGrid({ puzzle }) {
     setPos(next);
   }
 
-  function setSelectionByNumber(nextDir, number) {
-    setDir(nextDir);
-    setClueNumber(number);
-    const list = nextDir === "across" ? numbering.across : numbering.down;
-    const entry = list.find((e) => e.number === number);
-    if (entry) focusCell(entry.positions[0]);
-  }
+  const setSelectionByNumber = React.useCallback(
+    (nextDir, number) => {
+      setDir(nextDir);
+      setClueNumber(number);
+      const list = nextDir === "across" ? numbering.across : numbering.down;
+      const entry = list.find((e) => e.number === number);
+      if (entry) focusCell(entry.positions[0]);
+    },
+    [numbering]
+  );
 
-  function handleChange(r, c, value) {
+  const handleChange = React.useCallback((r, c, value) => {
     setCells((prev) => {
       const next = prev.map((row) => row.slice());
       next[r][c] = value.slice(-1).toUpperCase();
@@ -227,25 +307,28 @@ function CrosswordGrid({ puzzle }) {
       next[r][c] = false;
       return next;
     });
-  }
+  }, []);
 
-  function move(pos, direction, delta) {
-    let { r, c } = pos;
-    function isBlockAt(rr, cc) {
-      const cell = puzzle.grid[rr]?.[cc];
-      return typeof cell === "string" ? cell === "." : false;
-    }
-    for (let step = 0; step < rows * cols; step += 1) {
-      if (direction === "across") {
-        c += delta;
-      } else {
-        r += delta;
+  const move = React.useCallback(
+    (pos, direction, delta) => {
+      let { r, c } = pos;
+      function isBlockAt(rr, cc) {
+        const cell = puzzle.grid[rr]?.[cc];
+        return typeof cell === "string" ? cell === "." : false;
       }
-      if (r < 0 || c < 0 || r >= rows || c >= cols) break;
-      if (!isBlockAt(r, c)) return { r, c };
-    }
-    return pos;
-  }
+      for (let step = 0; step < rows * cols; step += 1) {
+        if (direction === "across") {
+          c += delta;
+        } else {
+          r += delta;
+        }
+        if (r < 0 || c < 0 || r >= rows || c >= cols) break;
+        if (!isBlockAt(r, c)) return { r, c };
+      }
+      return pos;
+    },
+    [rows, cols, puzzle]
+  );
 
   function handleKeyDown(e, r, c) {
     const key = e.key;
@@ -323,6 +406,116 @@ function CrosswordGrid({ puzzle }) {
       return;
     }
   }
+
+  // Mobile keyboard helpers (used on small screens)
+  const typeLetter = React.useCallback(
+    (letter) => {
+      const r = pos.r;
+      const c = pos.c;
+      const ch = letter.slice(-1).toUpperCase();
+      handleChange(r, c, ch);
+      const next = move({ r, c }, dir, 1);
+      setPos(next);
+      const num =
+        dir === "across"
+          ? numbering.acrossNumAt[next.r][next.c]
+          : numbering.downNumAt[next.r][next.c];
+      if (num) setClueNumber(num);
+    },
+    [pos, dir, numbering, move, handleChange]
+  );
+
+  const pressBackspace = React.useCallback(() => {
+    const r = pos.r;
+    const c = pos.c;
+    setCells((prev) => {
+      const next = prev.map((row) => row.slice());
+      if (next[r][c]) {
+        next[r][c] = "";
+        return next;
+      }
+      const prevPos = move({ r, c }, dir, -1);
+      next[prevPos.r][prevPos.c] = "";
+      setPos(prevPos);
+      const num =
+        dir === "across"
+          ? numbering.acrossNumAt[prevPos.r][prevPos.c]
+          : numbering.downNumAt[prevPos.r][prevPos.c];
+      if (num) setClueNumber(num);
+      return next;
+    });
+  }, [pos, dir, numbering, move]);
+
+  const pressArrow = React.useCallback(
+    (key) => {
+      const r = pos.r;
+      const c = pos.c;
+      if (key === "ArrowLeft") {
+        setDir("across");
+        const next = move({ r, c }, "across", -1);
+        setPos(next);
+        const num = numbering.acrossNumAt[next.r][next.c];
+        if (num) setClueNumber(num);
+      } else if (key === "ArrowRight") {
+        setDir("across");
+        const next = move({ r, c }, "across", 1);
+        setPos(next);
+        const num = numbering.acrossNumAt[next.r][next.c];
+        if (num) setClueNumber(num);
+      } else if (key === "ArrowUp") {
+        setDir("down");
+        const next = move({ r, c }, "down", -1);
+        setPos(next);
+        const num = numbering.downNumAt[next.r][next.c];
+        if (num) setClueNumber(num);
+      } else if (key === "ArrowDown") {
+        setDir("down");
+        const next = move({ r, c }, "down", 1);
+        setPos(next);
+        const num = numbering.downNumAt[next.r][next.c];
+        if (num) setClueNumber(num);
+      }
+    },
+    [pos, numbering, move]
+  );
+
+  const toggleDir = React.useCallback(() => {
+    const newDir = dir === "across" ? "down" : "across";
+    const r = pos.r;
+    const c = pos.c;
+    const num =
+      newDir === "across"
+        ? numbering.acrossNumAt[r][c]
+        : numbering.downNumAt[r][c];
+    if (num) setSelectionByNumber(newDir, num);
+    else setDir(newDir);
+  }, [dir, pos, numbering, setSelectionByNumber]);
+
+  React.useEffect(() => {
+    if (!isSmallScreen) return; // only for mobile to support hardware keyboards
+    function onDocKey(e) {
+      if (
+        e.key.startsWith("Arrow") ||
+        e.key === "Backspace" ||
+        (e.key.length === 1 && /[A-Za-z]/.test(e.key))
+      ) {
+        e.preventDefault();
+        if (e.key === "Backspace") return pressBackspace();
+        if (e.key.startsWith("Arrow")) return pressArrow(e.key);
+        typeLetter(e.key);
+      }
+    }
+    document.addEventListener("keydown", onDocKey);
+    return () => document.removeEventListener("keydown", onDocKey);
+  }, [
+    isSmallScreen,
+    pos,
+    dir,
+    numbering,
+    pressBackspace,
+    pressArrow,
+    typeLetter,
+  ]);
 
   function handleCellClick(r, c) {
     const numAcross = numbering.acrossNumAt[r][c];
@@ -446,21 +639,123 @@ function CrosswordGrid({ puzzle }) {
   return (
     <div className="layout">
       <div className="crossword">
-        <div className="toolbar">
-          <div className="button-group">
-            <span className="group-label">Check:</span>
-            <button onClick={checkSquare}>Square</button>
-            <button onClick={checkWord}>Word</button>
-            <button onClick={checkPuzzle}>Puzzle</button>
+        <div className="topbar">
+          <div className="timer" aria-label="elapsed time">
+            {formatElapsed(elapsedMs)}
           </div>
-          <div className="button-group">
-            <span className="group-label">Reveal:</span>
-            <button onClick={revealSquare}>Letter</button>
-            <button onClick={revealWord}>Word</button>
-            <button onClick={revealPuzzle}>Puzzle</button>
-          </div>
-          <div className="button-group">
-            <button onClick={clearPuzzle}>Clear</button>
+          <div className="dotmenu" ref={menuRef}>
+            <button
+              className="dot-btn"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              aria-label="Menu"
+              onClick={toggleMenu}
+            />
+            {menuOpen && (
+              <div className="dotmenu-dropdown" role="menu">
+                {menuView === "root" && (
+                  <div className="dotmenu-view">
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => setMenuView("check")}
+                    >
+                      <span>Check</span>
+                      <span className="dotmenu-caret">›</span>
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => setMenuView("reveal")}
+                    >
+                      <span>Reveal</span>
+                      <span className="dotmenu-caret">›</span>
+                    </button>
+                    <button
+                      className="dotmenu-item dotmenu-danger"
+                      onClick={() => {
+                        clearPuzzle();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+                {menuView === "check" && (
+                  <div className="dotmenu-view">
+                    <button
+                      className="dotmenu-back"
+                      onClick={() => setMenuView("root")}
+                    >
+                      ◀ Back
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        checkSquare();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Square
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        checkWord();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Word
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        checkPuzzle();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Puzzle
+                    </button>
+                  </div>
+                )}
+                {menuView === "reveal" && (
+                  <div className="dotmenu-view">
+                    <button
+                      className="dotmenu-back"
+                      onClick={() => setMenuView("root")}
+                    >
+                      ◀ Back
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        revealSquare();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Letter
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        revealWord();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Word
+                    </button>
+                    <button
+                      className="dotmenu-item"
+                      onClick={() => {
+                        revealPuzzle();
+                        setMenuOpen(false);
+                      }}
+                    >
+                      Puzzle
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div
@@ -504,11 +799,16 @@ function CrosswordGrid({ puzzle }) {
                       }}
                       className="cell-input"
                       type="text"
-                      inputMode="latin"
+                      inputMode={isSmallScreen ? "none" : "latin"}
                       maxLength={1}
                       value={cells[r][c] || ""}
                       onChange={(e) => handleChange(r, c, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(e, r, c)}
+                      readOnly={isSmallScreen}
+                      tabIndex={isSmallScreen ? -1 : 0}
+                      style={
+                        isSmallScreen ? { pointerEvents: "none" } : undefined
+                      }
                       onDoubleClick={() => handleCellDoubleClick(r, c)}
                     />
                   )}
@@ -524,6 +824,14 @@ function CrosswordGrid({ puzzle }) {
             </span>
             {currentEntry?.clue || ""}
           </div>
+        )}
+        {isSmallScreen && (
+          <MobileKeyboard
+            dir={dir}
+            onChar={(ch) => typeLetter(ch)}
+            onBackspace={() => pressBackspace()}
+            onToggleDir={() => toggleDir()}
+          />
         )}
       </div>
       <div className="clues">
