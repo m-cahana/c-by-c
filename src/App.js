@@ -224,6 +224,7 @@ function CrosswordGrid({ puzzle }) {
   // Completion state
   const [completed, setCompleted] = React.useState(false);
   const [showCongrats, setShowCongrats] = React.useState(false);
+  const [showInfo, setShowInfo] = React.useState(false);
 
   function isSolved() {
     for (let rr = 0; rr < rows; rr += 1) {
@@ -838,6 +839,14 @@ function CrosswordGrid({ puzzle }) {
                 </div>
               )}
             </div>
+            <button
+              className="info-btn"
+              aria-label="Info"
+              title="Information"
+              onClick={() => setShowInfo(true)}
+            >
+              i
+            </button>
           </div>
         </div>
         <div
@@ -918,6 +927,28 @@ function CrosswordGrid({ puzzle }) {
               <button
                 className="admin-button"
                 onClick={() => setShowCongrats(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        {showInfo && (
+          <div className="modal-backdrop" onClick={() => setShowInfo(false)}>
+            <div className="modal" role="dialog" aria-modal="true">
+              <h3 style={{ marginTop: 0 }}>Information</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
+                nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis
+                ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+                Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent
+                taciti sociosqu ad litora torquent per conubia nostra, per
+                inceptos himenaeos.
+              </p>
+              <button
+                className="admin-button"
+                onClick={() => setShowInfo(false)}
               >
                 Close
               </button>
