@@ -39,9 +39,27 @@
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 10px;
   margin-bottom: 8px;
+}
+
+.topbar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.puzzle-title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0a2e28;
+  text-align: left;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timer {

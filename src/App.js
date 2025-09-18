@@ -714,122 +714,130 @@ function CrosswordGrid({ puzzle }) {
     <div className="layout">
       <div className="crossword">
         <div className="topbar">
-          <div className="timer" aria-label="elapsed time">
-            {formatElapsed(elapsedMs)}
+          <div
+            className="puzzle-title"
+            title={puzzle.meta?.title || "Crossword"}
+          >
+            {puzzle.meta?.title || "Crossword"}
           </div>
-          <div className="dotmenu" ref={menuRef}>
-            <button
-              className="dot-btn"
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label="Menu"
-              onClick={toggleMenu}
-            />
-            {menuOpen && (
-              <div className="dotmenu-dropdown" role="menu">
-                {menuView === "root" && (
-                  <div className="dotmenu-view">
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => setMenuView("check")}
-                    >
-                      <span>Check</span>
-                      <span className="dotmenu-caret">›</span>
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => setMenuView("reveal")}
-                    >
-                      <span>Reveal</span>
-                      <span className="dotmenu-caret">›</span>
-                    </button>
-                    <button
-                      className="dotmenu-item dotmenu-danger"
-                      onClick={() => {
-                        clearPuzzle();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                )}
-                {menuView === "check" && (
-                  <div className="dotmenu-view">
-                    <button
-                      className="dotmenu-back"
-                      onClick={() => setMenuView("root")}
-                    >
-                      ◀ Back
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        checkSquare();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Square
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        checkWord();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Word
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        checkPuzzle();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Puzzle
-                    </button>
-                  </div>
-                )}
-                {menuView === "reveal" && (
-                  <div className="dotmenu-view">
-                    <button
-                      className="dotmenu-back"
-                      onClick={() => setMenuView("root")}
-                    >
-                      ◀ Back
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        revealSquare();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Letter
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        revealWord();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Word
-                    </button>
-                    <button
-                      className="dotmenu-item"
-                      onClick={() => {
-                        revealPuzzle();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      Puzzle
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+          <div className="topbar-right">
+            <div className="timer" aria-label="elapsed time">
+              {formatElapsed(elapsedMs)}
+            </div>
+            <div className="dotmenu" ref={menuRef}>
+              <button
+                className="dot-btn"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                aria-label="Menu"
+                onClick={toggleMenu}
+              />
+              {menuOpen && (
+                <div className="dotmenu-dropdown" role="menu">
+                  {menuView === "root" && (
+                    <div className="dotmenu-view">
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => setMenuView("check")}
+                      >
+                        <span>Check</span>
+                        <span className="dotmenu-caret">›</span>
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => setMenuView("reveal")}
+                      >
+                        <span>Reveal</span>
+                        <span className="dotmenu-caret">›</span>
+                      </button>
+                      <button
+                        className="dotmenu-item dotmenu-danger"
+                        onClick={() => {
+                          clearPuzzle();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
+                  {menuView === "check" && (
+                    <div className="dotmenu-view">
+                      <button
+                        className="dotmenu-back"
+                        onClick={() => setMenuView("root")}
+                      >
+                        ◀ Back
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          checkSquare();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Square
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          checkWord();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Word
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          checkPuzzle();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Puzzle
+                      </button>
+                    </div>
+                  )}
+                  {menuView === "reveal" && (
+                    <div className="dotmenu-view">
+                      <button
+                        className="dotmenu-back"
+                        onClick={() => setMenuView("root")}
+                      >
+                        ◀ Back
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          revealSquare();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Letter
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          revealWord();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Word
+                      </button>
+                      <button
+                        className="dotmenu-item"
+                        onClick={() => {
+                          revealPuzzle();
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Puzzle
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div
@@ -951,7 +959,6 @@ function MainPage() {
   return (
     <div className="App">
       <div className="content-top">
-        <h1 className="title">{puzzle.meta?.title || "Crossword"}</h1>
         <CrosswordGrid puzzle={puzzle} />
       </div>
     </div>
