@@ -249,6 +249,36 @@ function CrosswordGrid({ puzzle }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cells]);
 
+  // Pause timer when page is hidden; exclude hidden time from elapsed
+  const hiddenStartRef = React.useRef(null);
+  React.useEffect(() => {
+    function onVisibilityChange() {
+      if (document.hidden) {
+        if (timerRunning && !completed) {
+          setTimerRunning(false);
+          hiddenStartRef.current = Date.now();
+        }
+      } else {
+        if (hiddenStartRef.current != null) {
+          const delta = Date.now() - hiddenStartRef.current;
+          hiddenStartRef.current = null;
+          setStartTs((prev) => {
+            const next = prev + delta;
+            try {
+              localStorage.setItem(timerKey, String(next));
+            } catch {}
+            return next;
+          });
+          setNowTs(Date.now());
+          if (!completed) setTimerRunning(true);
+        }
+      }
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, [timerKey, completed, timerRunning]);
+
   // Dot menu state
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuView, setMenuView] = React.useState("root"); // root | check | reveal
