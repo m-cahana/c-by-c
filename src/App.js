@@ -280,6 +280,31 @@ function CrosswordGrid({ puzzle }) {
       document.removeEventListener("visibilitychange", onVisibilityChange);
   }, [timerKey, completed, timerRunning]);
 
+  // Pause timer when info modal is open; exclude modal time from elapsed
+  const infoModalStartRef = React.useRef(null);
+  React.useEffect(() => {
+    if (showInfo) {
+      if (timerRunning && !completed) {
+        setTimerRunning(false);
+        infoModalStartRef.current = Date.now();
+      }
+    } else {
+      if (infoModalStartRef.current != null) {
+        const delta = Date.now() - infoModalStartRef.current;
+        infoModalStartRef.current = null;
+        setStartTs((prev) => {
+          const next = prev + delta;
+          try {
+            localStorage.setItem(timerKey, String(next));
+          } catch {}
+          return next;
+        });
+        setNowTs(Date.now());
+        if (!completed) setTimerRunning(true);
+      }
+    }
+  }, [showInfo, timerKey, completed, timerRunning]);
+
   // Dot menu state
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuView, setMenuView] = React.useState("root"); // root | check | reveal
