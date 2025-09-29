@@ -377,7 +377,9 @@ function CrosswordGrid({ puzzle }) {
       setClueNumber(number);
       const list = nextDir === "across" ? numbering.across : numbering.down;
       const entry = list.find((e) => e.number === number);
-      if (entry) focusCell(entry.positions[0]);
+      if (entry) {
+        focusCell(entry.positions[0]);
+      }
     },
     [numbering]
   );
@@ -606,22 +608,45 @@ function CrosswordGrid({ puzzle }) {
   function handleCellClick(r, c) {
     const numAcross = numbering.acrossNumAt[r][c];
     const numDown = numbering.downNumAt[r][c];
+
+    // Always set the position first
+    setPos({ r, c });
+
     if (pos.r === r && pos.c === c) {
+      // If clicking the same cell, toggle direction if possible
       if (dir === "across") {
-        if (numAcross) setSelectionByNumber("across", numAcross);
-        else if (numDown) setSelectionByNumber("down", numDown);
-        else setPos({ r, c });
+        if (numDown) {
+          setDir("down");
+          setClueNumber(numDown);
+        } else if (numAcross) {
+          setDir("across");
+          setClueNumber(numAcross);
+        }
+        // If no clue numbers, keep current direction
       } else {
-        if (numDown) setSelectionByNumber("down", numDown);
-        else if (numAcross) setSelectionByNumber("across", numAcross);
-        else setPos({ r, c });
+        if (numAcross) {
+          setDir("across");
+          setClueNumber(numAcross);
+        } else if (numDown) {
+          setDir("down");
+          setClueNumber(numDown);
+        }
+        // If no clue numbers, keep current direction
       }
     } else {
+      // When clicking a different cell, try to maintain direction preference
       const preferNum = dir === "across" ? numAcross : numDown;
-      if (preferNum) setSelectionByNumber(dir, preferNum);
-      else if (numAcross) setSelectionByNumber("across", numAcross);
-      else if (numDown) setSelectionByNumber("down", numDown);
-      else setPos({ r, c });
+      if (preferNum) {
+        setDir(dir);
+        setClueNumber(preferNum);
+      } else if (numAcross) {
+        setDir("across");
+        setClueNumber(numAcross);
+      } else if (numDown) {
+        setDir("down");
+        setClueNumber(numDown);
+      }
+      // If no clue numbers, just set position (direction and clue number remain unchanged)
     }
   }
 
@@ -630,7 +655,11 @@ function CrosswordGrid({ puzzle }) {
     const numDown = numbering.downNumAt[r][c];
     const newDir = dir === "across" ? "down" : "across";
     const num = newDir === "across" ? numAcross : numDown;
-    if (num) setSelectionByNumber(newDir, num);
+    if (num) {
+      setPos({ r, c });
+      setDir(newDir);
+      setClueNumber(num);
+    }
   }
 
   const activePositions = React.useMemo(() => {
