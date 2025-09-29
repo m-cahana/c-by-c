@@ -460,6 +460,29 @@ function CrosswordGrid({ puzzle }) {
       else setDir(newDir);
       return;
     }
+    if (key === "Enter") {
+      e.preventDefault();
+      const currentList = dir === "across" ? numbering.across : numbering.down;
+      const currentIndex = currentList.findIndex(
+        (e) => e.number === clueNumber
+      );
+
+      if (currentIndex !== -1 && currentIndex < currentList.length - 1) {
+        // Move to next clue in current direction
+        const nextClue = currentList[currentIndex + 1];
+        setSelectionByNumber(dir, nextClue.number);
+      } else {
+        // No more clues in current direction, switch to other direction
+        const otherDir = dir === "across" ? "down" : "across";
+        const otherList =
+          otherDir === "across" ? numbering.across : numbering.down;
+        if (otherList.length > 0) {
+          const firstClue = otherList[0];
+          setSelectionByNumber(otherDir, firstClue.number);
+        }
+      }
+      return;
+    }
     if (key === "Backspace") {
       e.preventDefault();
       setCells((prev) => {
@@ -579,17 +602,39 @@ function CrosswordGrid({ puzzle }) {
     else setDir(newDir);
   }, [dir, pos, numbering, setSelectionByNumber]);
 
+  const pressEnter = React.useCallback(() => {
+    const currentList = dir === "across" ? numbering.across : numbering.down;
+    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
+
+    if (currentIndex !== -1 && currentIndex < currentList.length - 1) {
+      // Move to next clue in current direction
+      const nextClue = currentList[currentIndex + 1];
+      setSelectionByNumber(dir, nextClue.number);
+    } else {
+      // No more clues in current direction, switch to other direction
+      const otherDir = dir === "across" ? "down" : "across";
+      const otherList =
+        otherDir === "across" ? numbering.across : numbering.down;
+      if (otherList.length > 0) {
+        const firstClue = otherList[0];
+        setSelectionByNumber(otherDir, firstClue.number);
+      }
+    }
+  }, [dir, clueNumber, numbering, setSelectionByNumber]);
+
   React.useEffect(() => {
     if (!isSmallScreen) return; // only for mobile to support hardware keyboards
     function onDocKey(e) {
       if (
         e.key.startsWith("Arrow") ||
         e.key === "Backspace" ||
+        e.key === "Enter" ||
         (e.key.length === 1 && /[A-Za-z]/.test(e.key))
       ) {
         e.preventDefault();
         if (e.key === "Backspace") return pressBackspace();
         if (e.key.startsWith("Arrow")) return pressArrow(e.key);
+        if (e.key === "Enter") return pressEnter();
         typeLetter(e.key);
       }
     }
@@ -602,6 +647,7 @@ function CrosswordGrid({ puzzle }) {
     numbering,
     pressBackspace,
     pressArrow,
+    pressEnter,
     typeLetter,
   ]);
 
