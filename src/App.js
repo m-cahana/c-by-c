@@ -206,9 +206,9 @@ function CrosswordGrid({ puzzle }) {
           const now = Date.now();
           const timeSinceLastActivity = now - lastActivity;
 
-          // If more than 5 seconds since last activity, assume tab was closed
-          // and adjust start time to account for the gap
-          if (timeSinceLastActivity > 5 * 1000) {
+          // If more than 2 seconds since last activity, assume tab was closed
+          // and adjust start time to account for the gap (shorter for mobile Safari)
+          if (timeSinceLastActivity > 2 * 1000) {
             const adjustedStart = parsed + timeSinceLastActivity;
             localStorage.setItem(timerKey, String(adjustedStart));
             localStorage.setItem(lastActivityKey, String(now));
@@ -306,9 +306,57 @@ function CrosswordGrid({ puzzle }) {
         }
       }
     }
+
+    function onPageHide() {
+      // More reliable for mobile Safari - fires when page is being unloaded
+      if (timerRunning && !completed) {
+        setTimerRunning(false);
+        hiddenStartRef.current = Date.now();
+        // Immediately save the pause time to localStorage
+        try {
+          localStorage.setItem(lastActivityKey, String(Date.now()));
+        } catch {}
+      }
+    }
+
+    function onPageShow() {
+      // Resume timer when page becomes visible again
+      if (hiddenStartRef.current != null) {
+        const delta = Date.now() - hiddenStartRef.current;
+        hiddenStartRef.current = null;
+        setStartTs((prev) => {
+          const next = prev + delta;
+          try {
+            localStorage.setItem(timerKey, String(next));
+            localStorage.setItem(lastActivityKey, String(Date.now()));
+          } catch {}
+          return next;
+        });
+        setNowTs(Date.now());
+        if (!completed) setTimerRunning(true);
+      }
+    }
+
+    function onBeforeUnload() {
+      // Additional safety net for mobile Safari - save current state immediately
+      if (timerRunning && !completed) {
+        try {
+          localStorage.setItem(lastActivityKey, String(Date.now()));
+        } catch {}
+      }
+    }
+
     document.addEventListener("visibilitychange", onVisibilityChange);
-    return () =>
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("beforeunload", onBeforeUnload);
+
+    return () => {
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("pageshow", onPageShow);
+      window.removeEventListener("beforeunload", onBeforeUnload);
+    };
   }, [timerKey, lastActivityKey, completed, timerRunning]);
 
   // Pause timer when info modal is open; exclude modal time from elapsed
