@@ -189,15 +189,39 @@ function CrosswordGrid({ puzzle }) {
     () => `${storageKey}-timerStart`,
     [storageKey]
   );
+  const lastActivityKey = React.useMemo(
+    () => `${storageKey}-lastActivity`,
+    [storageKey]
+  );
   const [startTs, setStartTs] = React.useState(() => {
     try {
       const raw = localStorage.getItem(timerKey);
-      if (raw) {
+      const lastActivityRaw = localStorage.getItem(lastActivityKey);
+
+      if (raw && lastActivityRaw) {
         const parsed = parseInt(raw, 10);
-        if (!Number.isNaN(parsed)) return parsed;
+        const lastActivity = parseInt(lastActivityRaw, 10);
+
+        if (!Number.isNaN(parsed) && !Number.isNaN(lastActivity)) {
+          const now = Date.now();
+          const timeSinceLastActivity = now - lastActivity;
+
+          // If more than 5 seconds since last activity, assume tab was closed
+          // and adjust start time to account for the gap
+          if (timeSinceLastActivity > 5 * 1000) {
+            const adjustedStart = parsed + timeSinceLastActivity;
+            localStorage.setItem(timerKey, String(adjustedStart));
+            localStorage.setItem(lastActivityKey, String(now));
+            return adjustedStart;
+          }
+
+          return parsed;
+        }
       }
+
       const t = Date.now();
       localStorage.setItem(timerKey, String(t));
+      localStorage.setItem(lastActivityKey, String(t));
       return t;
     } catch {
       return Date.now();
@@ -207,9 +231,15 @@ function CrosswordGrid({ puzzle }) {
   const [timerRunning, setTimerRunning] = React.useState(true);
   React.useEffect(() => {
     if (!timerRunning) return;
-    const id = setInterval(() => setNowTs(Date.now()), 1000);
+    const id = setInterval(() => {
+      setNowTs(Date.now());
+      // Update last activity time while timer is running
+      try {
+        localStorage.setItem(lastActivityKey, String(Date.now()));
+      } catch {}
+    }, 1000);
     return () => clearInterval(id);
-  }, [timerRunning]);
+  }, [timerRunning, lastActivityKey]);
   const elapsedMs = nowTs - startTs;
   function formatElapsed(ms) {
     const totalSec = Math.max(0, Math.floor(ms / 1000));
@@ -267,6 +297,7 @@ function CrosswordGrid({ puzzle }) {
             const next = prev + delta;
             try {
               localStorage.setItem(timerKey, String(next));
+              localStorage.setItem(lastActivityKey, String(Date.now()));
             } catch {}
             return next;
           });
@@ -278,7 +309,7 @@ function CrosswordGrid({ puzzle }) {
     document.addEventListener("visibilitychange", onVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", onVisibilityChange);
-  }, [timerKey, completed, timerRunning]);
+  }, [timerKey, lastActivityKey, completed, timerRunning]);
 
   // Pause timer when info modal is open; exclude modal time from elapsed
   const infoModalStartRef = React.useRef(null);
@@ -296,6 +327,7 @@ function CrosswordGrid({ puzzle }) {
           const next = prev + delta;
           try {
             localStorage.setItem(timerKey, String(next));
+            localStorage.setItem(lastActivityKey, String(Date.now()));
           } catch {}
           return next;
         });
@@ -303,7 +335,7 @@ function CrosswordGrid({ puzzle }) {
         if (!completed) setTimerRunning(true);
       }
     }
-  }, [showInfo, timerKey, completed, timerRunning]);
+  }, [showInfo, timerKey, lastActivityKey, completed, timerRunning]);
 
   // Dot menu state
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -804,6 +836,7 @@ function CrosswordGrid({ puzzle }) {
     const t = Date.now();
     try {
       localStorage.setItem(timerKey, String(t));
+      localStorage.setItem(lastActivityKey, String(t));
     } catch {}
     setStartTs(t);
     setTimerRunning(true);
