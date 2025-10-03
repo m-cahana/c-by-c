@@ -207,12 +207,11 @@ function CrosswordGrid({ puzzle }) {
           const timeSinceLastActivity = now - lastActivity;
 
           // If more than 2 seconds since last activity, assume tab was closed
-          // and adjust start time to account for the gap (shorter for mobile Safari)
+          // BUT don't add the gap to the timer - just update the last activity time
           if (timeSinceLastActivity > 2 * 1000) {
-            const adjustedStart = parsed + timeSinceLastActivity;
-            localStorage.setItem(timerKey, String(adjustedStart));
+            // Update last activity time but keep the original start time
             localStorage.setItem(lastActivityKey, String(now));
-            return adjustedStart;
+            return parsed; // Return original start time, don't add the gap
           }
 
           return parsed;
