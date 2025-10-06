@@ -535,12 +535,6 @@
   }
 }
 
-@media (min-width: 801px) and (max-width: 1199px) {
-  .clues {
-    margin-top: 26px; /* Align with crossword grid start position */
-  }
-}
-
 @media (min-width: 1200px) {
   .App {
     max-width: 1280px;
@@ -553,7 +547,6 @@
     grid-template-columns: 1fr 1fr;
     align-items: start;
     gap: 16px;
-    margin-top: 26px; /* Align with crossword grid start position */
   }
   .crossword {
     margin-left: 0;
