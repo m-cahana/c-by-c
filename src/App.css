@@ -14,6 +14,10 @@
   text-align: center;
 }
 
+.subtitle {
+  font-size: 20px;
+}
+
 .status {
   padding: 16px;
 }
@@ -36,18 +40,33 @@
   margin: 0 auto;
 }
 
+.home-button-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.topbar .home-btn {
+  position: absolute;
+  left: 0;
+}
+
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 8px;
+  position: relative;
 }
 
 .topbar-right {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  position: absolute;
+  right: 0;
 }
 
 .puzzle-title {
@@ -55,7 +74,7 @@
   font-weight: 700;
   line-height: 1.2;
   color: #0a2e28;
-  text-align: left;
+  text-align: center;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,6 +148,67 @@
   font-weight: 700;
   line-height: 1;
   padding: 0;
+}
+
+.home-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 0;
+  background: #000;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  position: relative;
+}
+
+/* Create home icon using SVG */
+.home-btn::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 104 100'%3E%3Cpath d='M100.5 40.75V96.5H66V68.5V65H62.5H43H39.5V68.5V96.5H3.5V40.75L52 4.375L100.5 40.75Z' stroke='white' stroke-width='12' fill='none'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.close-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 0;
+  background: #000;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  position: relative;
+}
+
+/* Create X icon using CSS */
+.close-btn::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.close-btn::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  background: #fff;
+  transform: rotate(-45deg);
 }
 
 .dotmenu-dropdown {
@@ -280,6 +360,13 @@
   max-width: 420px;
   width: 100%;
   text-align: center;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 
 .grid {
@@ -552,4 +639,31 @@
     margin-left: 0;
     margin-right: 0;
   }
+}
+
+/* Directory page styles */
+.directory {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.puzzle-list {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.puzzle-item {
+  margin-bottom: 8px;
+}
+
+.puzzle-link {
+  color: #0a2e28;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.puzzle-link:hover {
+  color: #1d6781;
+  text-decoration: underline;
 }

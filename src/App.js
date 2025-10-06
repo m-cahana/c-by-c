@@ -1,7 +1,13 @@
 import React from "react";
 import MobileKeyboard from "./components/MobileKeyboard";
 import { supabase, isSupabaseConfigured } from "./supabase";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useParams,
+} from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
 import "./App.css";
 
@@ -24,6 +30,28 @@ async function fetchLatestSupabasePuz() {
   return { arrayBuffer, name: latest.name };
 }
 
+async function fetchAllSupabasePuzzles() {
+  if (!isSupabaseConfigured() || !supabase) return [];
+  const { data, error } = await supabase.storage
+    .from("puzzles")
+    .list("", { limit: 100 });
+  if (error) throw error;
+  if (!data || data.length === 0) return [];
+  return data
+    .filter((f) => f.name && f.name.toLowerCase().endsWith(".puz"))
+    .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+}
+
+async function fetchSpecificSupabasePuzzle(puzzleName) {
+  if (!isSupabaseConfigured() || !supabase) return null;
+  const { data: file, error } = await supabase.storage
+    .from("puzzles")
+    .download(puzzleName);
+  if (error) throw error;
+  const arrayBuffer = await file.arrayBuffer();
+  return { arrayBuffer, name: puzzleName };
+}
+
 function useLatestPuzzle(fallbackUrl) {
   const [puzzle, setPuzzle] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -37,12 +65,29 @@ function useLatestPuzzle(fallbackUrl) {
         setLoading(true);
         const { decode } = require("puzjs");
         let decoded = null;
-        try {
-          const latest = await fetchLatestSupabasePuz();
-          if (latest) {
-            decoded = decode(latest.arrayBuffer);
+
+        // Check if we're loading a specific puzzle from URL
+        const isSpecificPuzzle = fallbackUrl.startsWith("/puzzles/");
+        if (isSpecificPuzzle) {
+          const puzzleName = fallbackUrl.replace("/puzzles/", "");
+          try {
+            const specific = await fetchSpecificSupabasePuzzle(puzzleName);
+            if (specific) {
+              decoded = decode(specific.arrayBuffer);
+            }
+          } catch (supaErr) {
+            console.error("Failed to load specific puzzle:", supaErr);
           }
-        } catch (supaErr) {}
+        } else {
+          // Load latest puzzle
+          try {
+            const latest = await fetchLatestSupabasePuz();
+            if (latest) {
+              decoded = decode(latest.arrayBuffer);
+            }
+          } catch (supaErr) {}
+        }
+
         if (!decoded) {
           const res = await fetch(fallbackUrl);
           if (!res.ok) throw new Error(`Failed to load puzzle: ${res.status}`);
@@ -896,11 +941,13 @@ function CrosswordGrid({ puzzle }) {
     <div className="layout">
       <div className="crossword">
         <div className="topbar">
-          <div
-            className="puzzle-title"
-            title={puzzle.meta?.title || "Crossword"}
-          >
-            {puzzle.meta?.title || "Crossword"}
+          <button
+            className="home-btn"
+            aria-label="Home"
+            onClick={() => (window.location.href = "/directory")}
+          />
+          <div className="puzzle-title" title="Logo">
+            logo...
           </div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
@@ -1117,7 +1164,16 @@ function CrosswordGrid({ puzzle }) {
         {showInfo && (
           <div className="modal-backdrop" onClick={() => setShowInfo(false)}>
             <div className="modal" role="dialog" aria-modal="true">
-              <h3 style={{ marginTop: 0 }}>Information</h3>
+              <button
+                className="close-btn modal-close"
+                aria-label="Close"
+                onClick={() => setShowInfo(false)}
+              />
+              <h3 style={{ marginTop: 0 }}>Crosswords by Charlie</h3>
+              <p>
+                <strong>Puzzle Title:</strong>{" "}
+                {puzzle.meta?.title || "Crossword"}
+              </p>
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
                 nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
@@ -1127,12 +1183,6 @@ function CrosswordGrid({ puzzle }) {
                 taciti sociosqu ad litora torquent per conubia nostra, per
                 inceptos himenaeos.
               </p>
-              <button
-                className="admin-button"
-                onClick={() => setShowInfo(false)}
-              >
-                Close
-              </button>
             </div>
           </div>
         )}
@@ -1164,7 +1214,11 @@ function CrosswordGrid({ puzzle }) {
 }
 
 function MainPage() {
-  const { puzzle, error, loading } = useLatestPuzzle("/C by C 1.puz");
+  const { puzzleName } = useParams();
+  const fallbackUrl = puzzleName
+    ? `/puzzles/${decodeURIComponent(puzzleName)}`
+    : "/C by C 1.puz";
+  const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
   if (loading) return <div className="status centered">Loading puzzle…</div>;
   if (error) return <div className="status error">{String(error)}</div>;
   if (!puzzle) return null;
@@ -1195,11 +1249,81 @@ function AdminPage() {
   );
 }
 
+function Directory() {
+  const [puzzles, setPuzzles] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    async function loadPuzzles() {
+      try {
+        setLoading(true);
+        const puzzleList = await fetchAllSupabasePuzzles();
+        setPuzzles(puzzleList);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPuzzles();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="App">
+        <div className="status centered">Loading puzzles...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="App">
+        <div className="status centered error">
+          Error loading puzzles: {error}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="App">
+      <h1 className="title">logo...</h1>
+      <div className="directory">
+        <h2 className="subtitle">all puzzles:</h2>
+        {puzzles.length === 0 ? (
+          <p>No puzzles found.</p>
+        ) : (
+          <ul className="puzzle-list">
+            {puzzles.map((puzzle, index) => (
+              <li key={puzzle.name} className="puzzle-item">
+                <Link
+                  to={
+                    index === 0
+                      ? "/"
+                      : `/puzzle/${encodeURIComponent(puzzle.name)}`
+                  }
+                  className="puzzle-link"
+                >
+                  {puzzle.name.replace(".puz", "")}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/directory" element={<Directory />} />
+        <Route path="/puzzle/:puzzleName" element={<MainPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
