@@ -9,6 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
+import { Analytics } from "@vercel/analytics/react";
 import "./App.css";
 
 async function fetchLatestSupabasePuz() {
@@ -1326,6 +1327,7 @@ function App() {
         <Route path="/puzzle/:puzzleName" element={<MainPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
