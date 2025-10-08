@@ -240,6 +240,7 @@
   border-radius: 6px;
   cursor: pointer;
   text-align: left;
+  font-size: 14px;
 }
 .dotmenu-item:hover {
   background: #f8fafc;
@@ -257,6 +258,7 @@
   text-align: left;
   padding: 6px 10px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .button-group {
