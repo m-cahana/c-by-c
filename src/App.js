@@ -1094,6 +1094,12 @@ function CrosswordGrid({ puzzle }) {
               );
               const isIncorrect = incorrect[r][c];
               const isCurrent = !isBlock && pos.r === r && pos.c === c;
+
+              // Calculate center position
+              const centerRow = Math.floor(rows / 2);
+              const centerCol = Math.floor(cols / 2);
+              const isCenter = r === centerRow && c === centerCol;
+
               let cellClass = "cell";
               if (isBlock) cellClass += " block";
               else {
@@ -1101,6 +1107,8 @@ function CrosswordGrid({ puzzle }) {
                 if (isIncorrect) cellClass += " incorrect";
                 if (isCurrent) cellClass += " current";
               }
+              if (isCenter) cellClass += " center";
+
               return (
                 <div
                   key={`${r}-${c}`}
@@ -1108,6 +1116,13 @@ function CrosswordGrid({ puzzle }) {
                   onClick={() => !isBlock && handleCellClick(r, c)}
                   onDoubleClick={() => !isBlock && handleCellDoubleClick(r, c)}
                 >
+                  {isCenter && (
+                    <img
+                      src="/logos/IMG_0240.jpg"
+                      alt="Center logo"
+                      className="center-image"
+                    />
+                  )}
                   {number && <div className="cell-number">{number}</div>}
                   {!isBlock && (
                     <input
