@@ -381,12 +381,12 @@
 }
 
 .cell {
-  background: #fff;
+  background: #ffff89;
   position: relative;
 }
 
 .cell.block {
-  background: #280f06; /* from Figma palette */
+  background: #2e3192; /* from Figma palette */
 }
 
 .cell.active {
@@ -470,7 +470,7 @@
 }
 
 .clue.selected {
-  background: #1d6781;
+  background: #2e3192;
   color: #fff;
 }
 
