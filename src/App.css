@@ -390,11 +390,11 @@
 }
 
 .cell.active {
-  background: #f9e0d7; /* selected answer tiles */
+  background: #ffffff; /* selected answer tiles */
 }
 
 .cell.current {
-  background: #1d6781; /* focused cell */
+  background: #2e3192; /* focused cell */
 }
 
 .cell.incorrect {
