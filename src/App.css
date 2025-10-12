@@ -386,7 +386,7 @@
 }
 
 .cell.block {
-  background: #280f06; /* from Figma palette */
+  background: #000000; /* from Figma palette */
 }
 
 .cell.active {
@@ -394,7 +394,7 @@
 }
 
 .cell.current {
-  background: #2e3192; /* focused cell */
+  background: #5154ae; /* focused cell */
 }
 
 .cell.incorrect {
@@ -476,8 +476,7 @@
 }
 
 .clue:hover {
-  background: #ffff89;
-  opacity: 0.2;
+  font-weight: 700;
 }
 
 .clue.selected {

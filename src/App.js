@@ -1118,7 +1118,7 @@ function CrosswordGrid({ puzzle }) {
                 >
                   {isCenter && (
                     <img
-                      src="/logos/IMG_0240.jpg"
+                      src="/logos/Asset 3RB_LOGO_RED.png"
                       alt="Center logo"
                       className="center-image"
                     />
@@ -1213,13 +1213,13 @@ function CrosswordGrid({ puzzle }) {
       </div>
       <div className="clues">
         <ClueList
-          title="Across"
+          title="ACROSS"
           entries={numbering.across}
           currentNumber={dir === "across" ? clueNumber : null}
           onSelect={(n) => setSelectionByNumber("across", n)}
         />
         <ClueList
-          title="Down"
+          title="DOWN"
           entries={numbering.down}
           currentNumber={dir === "down" ? clueNumber : null}
           onSelect={(n) => setSelectionByNumber("down", n)}
