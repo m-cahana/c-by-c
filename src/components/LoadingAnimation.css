@@ -1,0 +1,41 @@
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.loading-overlay.fading {
+  opacity: 0;
+}
+
+.loading-video {
+  max-width: 20%;
+  max-height: 20%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Ensure video is centered and responsive */
+@media (max-width: 768px) {
+  .loading-video {
+    max-width: 80%;
+    max-height: 80%;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-video {
+    max-width: 90%;
+    max-height: 90%;
+  }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import MobileKeyboard from "./components/MobileKeyboard";
+import LoadingAnimation from "./components/LoadingAnimation";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import {
   BrowserRouter,
@@ -948,7 +949,7 @@ function CrosswordGrid({ puzzle }) {
             onClick={() => (window.location.href = "/directory")}
           />
           <div className="puzzle-title" title="Crossword">
-            logo...
+            <img src="/logos/crossword_logo.png" alt="Crossword Logo" />
           </div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
@@ -1095,11 +1096,6 @@ function CrosswordGrid({ puzzle }) {
               const isIncorrect = incorrect[r][c];
               const isCurrent = !isBlock && pos.r === r && pos.c === c;
 
-              // Calculate center position
-              const centerRow = Math.floor(rows / 2);
-              const centerCol = Math.floor(cols / 2);
-              const isCenter = r === centerRow && c === centerCol;
-
               let cellClass = "cell";
               if (isBlock) cellClass += " block";
               else {
@@ -1116,13 +1112,6 @@ function CrosswordGrid({ puzzle }) {
                   onDoubleClick={() => !isBlock && handleCellDoubleClick(r, c)}
                 >
                   {number && <div className="cell-number">{number}</div>}
-                  {isCenter && (
-                    <img
-                      src="/logos/Asset 3RB_LOGO_RED.png"
-                      alt="Center logo"
-                      className="center-image"
-                    />
-                  )}
                   {!isBlock && (
                     <input
                       aria-label={`r${r + 1}c${c + 1}`}
@@ -1228,13 +1217,65 @@ function MainPage() {
     ? `/puzzles/${decodeURIComponent(puzzleName)}`
     : "/C by C 1.puz";
   const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
-  if (loading) return <div className="status centered">Loading puzzle…</div>;
+  const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
+  const [showContent, setShowContent] = React.useState(false);
+  const [dataLoaded, setDataLoaded] = React.useState(false);
+  const loadStartTime = React.useRef(null);
+
+  React.useEffect(() => {
+    if (loading) {
+      loadStartTime.current = Date.now();
+      setShowLoadingAnimation(true);
+      setShowContent(false);
+    } else {
+      setShowLoadingAnimation(false);
+
+      // Check if loading was fast (less than 500ms) and mark data as loaded
+      if (loadStartTime.current) {
+        const loadTime = Date.now() - loadStartTime.current;
+        if (loadTime < 500) {
+          setDataLoaded(true);
+        }
+      }
+
+      // Add a small delay before showing content for smooth transition
+      setTimeout(() => {
+        setShowContent(true);
+      }, 100);
+    }
+  }, [loading]);
+
+  const handleLoadingComplete = () => {
+    setShowLoadingAnimation(false);
+    // Add a small delay before showing content for smooth transition
+    setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+  };
+
+  if (loading) {
+    return (
+      <>
+        {showLoadingAnimation && (
+          <LoadingAnimation
+            onComplete={handleLoadingComplete}
+            dataLoaded={dataLoaded}
+          />
+        )}
+        <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
+          <div className="status centered">Loading puzzle…</div>
+        </div>
+      </>
+    );
+  }
   if (error) return <div className="status error">{String(error)}</div>;
   if (!puzzle) return null;
   return (
-    <div className="App">
-      <div className="content-top">
-        <CrosswordGrid puzzle={puzzle} />
+    <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
+      <div className="App">
+        <div className="content-top">
+          <CrosswordGrid puzzle={puzzle} />
+        </div>
       </div>
     </div>
   );
@@ -1262,13 +1303,24 @@ function Directory() {
   const [puzzles, setPuzzles] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
+  const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
+  const [showContent, setShowContent] = React.useState(false);
+  const [dataLoaded, setDataLoaded] = React.useState(false);
+  const loadStartTime = React.useRef(null);
 
   React.useEffect(() => {
     async function loadPuzzles() {
       try {
+        loadStartTime.current = Date.now();
         setLoading(true);
         const puzzleList = await fetchAllSupabasePuzzles();
         setPuzzles(puzzleList);
+
+        // Check if loading was fast (less than 500ms) and mark data as loaded
+        const loadTime = Date.now() - loadStartTime.current;
+        if (loadTime < 500) {
+          setDataLoaded(true);
+        }
       } catch (e) {
         setError(e.message);
       } finally {
@@ -1278,11 +1330,42 @@ function Directory() {
     loadPuzzles();
   }, []);
 
+  React.useEffect(() => {
+    if (loading) {
+      setShowLoadingAnimation(true);
+      setShowContent(false);
+    } else {
+      setShowLoadingAnimation(false);
+      // Add a small delay before showing content for smooth transition
+      setTimeout(() => {
+        setShowContent(true);
+      }, 100);
+    }
+  }, [loading]);
+
+  const handleLoadingComplete = () => {
+    setShowLoadingAnimation(false);
+    // Add a small delay before showing content for smooth transition
+    setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+  };
+
   if (loading) {
     return (
-      <div className="App">
-        <div className="status centered">Loading puzzles...</div>
-      </div>
+      <>
+        {showLoadingAnimation && (
+          <LoadingAnimation
+            onComplete={handleLoadingComplete}
+            dataLoaded={dataLoaded}
+          />
+        )}
+        <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
+          <div className="App">
+            <div className="status centered">Loading puzzles...</div>
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -1297,45 +1380,61 @@ function Directory() {
   }
 
   return (
-    <div className="App">
-      <h1 className="title">logo...</h1>
-      <div className="directory">
-        <h2 className="subtitle">all puzzles:</h2>
-        {puzzles.length === 0 ? (
-          <p>No puzzles found.</p>
-        ) : (
-          <ul className="puzzle-list">
-            {puzzles.map((puzzle, index) => (
-              <li key={puzzle.name} className="puzzle-item">
-                <Link
-                  to={
-                    index === 0
-                      ? "/"
-                      : `/puzzle/${encodeURIComponent(puzzle.name)}`
-                  }
-                  className="puzzle-link"
-                >
-                  {puzzle.name.replace(".puz", "")}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
+      <div className="App">
+        <h1 className="title">Crosswords by Charlie</h1>
+        <div className="directory">
+          <h2 className="subtitle">All puzzles:</h2>
+          {puzzles.length === 0 ? (
+            <p>No puzzles found.</p>
+          ) : (
+            <ul className="puzzle-list">
+              {puzzles.map((puzzle, index) => (
+                <li key={puzzle.name} className="puzzle-item">
+                  <Link
+                    to={
+                      index === 0
+                        ? "/"
+                        : `/puzzle/${encodeURIComponent(puzzle.name)}`
+                    }
+                    className="puzzle-link"
+                  >
+                    {puzzle.name.replace(".puz", "")}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 function App() {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [showContent, setShowContent] = React.useState(false);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    // Add a small delay before showing content for smooth transition
+    setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+  };
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/directory" element={<Directory />} />
-        <Route path="/puzzle/:puzzleName" element={<MainPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-      </Routes>
-      <Analytics />
+      {isLoading && <LoadingAnimation onComplete={handleLoadingComplete} />}
+      <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/directory" element={<Directory />} />
+          <Route path="/puzzle/:puzzleName" element={<MainPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+        <Analytics />
+      </div>
     </BrowserRouter>
   );
 }
