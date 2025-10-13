@@ -63,7 +63,7 @@
 .topbar .home-btn {
   position: absolute;
   left: 0;
-  bottom: 6px;
+  bottom: 12px;
 }
 
 .topbar {
@@ -81,7 +81,7 @@
   gap: 10px;
   position: absolute;
   right: 0;
-  bottom: 6px;
+  bottom: 10px;
 }
 
 .puzzle-title {
@@ -663,6 +663,12 @@
   .home-btn {
     width: 18px;
     height: 18px;
+  }
+  .topbar .home-btn {
+    bottom: 16px;
+  }
+  .topbar-right {
+    bottom: 16px;
   }
   .dot-btn {
     width: 18px;
