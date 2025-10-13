@@ -1152,12 +1152,7 @@ function CrosswordGrid({ puzzle }) {
           )}
         </div>
         {clueNumber && (
-          <div className="mobile-clue-banner">
-            <span className="clue-dir">
-              {dir === "across" ? "Across" : "Down"} {clueNumber}
-            </span>
-            {currentEntry?.clue || ""}
-          </div>
+          <div className="mobile-clue-banner">{currentEntry?.clue || ""}</div>
         )}
         {showCongrats && (
           <div
@@ -1165,14 +1160,13 @@ function CrosswordGrid({ puzzle }) {
             onClick={() => setShowCongrats(false)}
           >
             <div className="modal" role="dialog" aria-modal="true">
+              <button
+                className="close-btn modal-close"
+                aria-label="Close"
+                onClick={() => setShowCongrats(false)}
+              />
               <h3 style={{ marginTop: 0 }}>Good work!</h3>
               <p>You've completed the puzzle in {formatElapsed(elapsedMs)}.</p>
-              <button
-                className="admin-button"
-                onClick={() => setShowCongrats(false)}
-              >
-                Close
-              </button>
             </div>
           </div>
         )}
