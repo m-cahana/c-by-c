@@ -426,6 +426,12 @@
   line-height: 1;
   background: transparent;
   caret-color: transparent; /* hide blinking text cursor */
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .cell-input::selection {
@@ -520,13 +526,14 @@
     margin-top: 8px;
     padding: 10px 12px;
     border-radius: 8px;
-    background: #0a2e28;
+    background: #000000;
     color: #fff;
     font-size: 16px;
   }
   .mobile-clue-banner .clue-dir {
     font-weight: 700;
     margin-right: 6px;
+    text-transform: uppercase;
   }
 
   .mobile-keyboard {
@@ -628,6 +635,12 @@
   }
   .cell-input {
     font-size: clamp(13px, 5.5vw, 21px);
+    line-height: 1.2;
+    padding-top: 2px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   .cell-number {
     font-size: 0.8rem;
@@ -660,7 +673,7 @@
 }
 
 .puzzle-list {
-  list-style: disc;
+  list-style: square;
   padding-left: 20px;
   margin: 0;
 }
@@ -675,7 +688,6 @@
   font-size: 16px;
 }
 
-.puzzle-link:hover {
-  color: #1d6781;
-  text-decoration: underline;
+.puzzle-item:hover .puzzle-link {
+  font-weight: 700;
 }

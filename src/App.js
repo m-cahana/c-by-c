@@ -947,7 +947,7 @@ function CrosswordGrid({ puzzle }) {
             aria-label="Home"
             onClick={() => (window.location.href = "/directory")}
           />
-          <div className="puzzle-title" title="Logo">
+          <div className="puzzle-title" title="Crossword">
             logo...
           </div>
           <div className="topbar-right">
@@ -1107,7 +1107,6 @@ function CrosswordGrid({ puzzle }) {
                 if (isIncorrect) cellClass += " incorrect";
                 if (isCurrent) cellClass += " current";
               }
-              if (isCenter) cellClass += " center";
 
               return (
                 <div
@@ -1116,6 +1115,7 @@ function CrosswordGrid({ puzzle }) {
                   onClick={() => !isBlock && handleCellClick(r, c)}
                   onDoubleClick={() => !isBlock && handleCellDoubleClick(r, c)}
                 >
+                  {number && <div className="cell-number">{number}</div>}
                   {isCenter && (
                     <img
                       src="/logos/Asset 3RB_LOGO_RED.png"
@@ -1123,7 +1123,6 @@ function CrosswordGrid({ puzzle }) {
                       className="center-image"
                     />
                   )}
-                  {number && <div className="cell-number">{number}</div>}
                   {!isBlock && (
                     <input
                       aria-label={`r${r + 1}c${c + 1}`}
@@ -1155,7 +1154,7 @@ function CrosswordGrid({ puzzle }) {
         {clueNumber && (
           <div className="mobile-clue-banner">
             <span className="clue-dir">
-              {dir === "across" ? "Across" : "Down"} {clueNumber}.
+              {dir === "across" ? "Across" : "Down"} {clueNumber}
             </span>
             {currentEntry?.clue || ""}
           </div>
