@@ -1,3 +1,10 @@
+:root {
+  --darker-color: #001b80;
+  --lighter-color: #3e57ff;
+  --block-color: #000940;
+  --incorrect-color: #80005b;
+}
+
 .App {
   max-width: 960px;
   margin: 0 auto;
@@ -239,7 +246,7 @@
   background: #fff;
   color: #0a2e28;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 2px;
   min-width: 180px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   z-index: 10;
@@ -266,15 +273,15 @@
   background: #f8fafc;
 }
 .dotmenu-danger {
-  color: #b00020;
+  color: var(--incorrect-color);
 }
 .dotmenu-caret {
-  color: #64748b;
+  color: var(--lighter-color);
 }
 .dotmenu-back {
   background: none;
   border: 0;
-  color: #64748b;
+  color: var(--lighter-color);
   text-align: left;
   padding: 6px 10px;
   cursor: pointer;
@@ -378,7 +385,7 @@
 .modal {
   background: #fff;
   color: #0a2e28;
-  border-radius: 12px;
+  border-radius: 2px;
   padding: 20px 24px;
   max-width: 420px;
   width: 100%;
@@ -407,24 +414,24 @@
 }
 
 .cell.block {
-  background: #000940; /* from Figma palette */
+  background: var(--block-color); /* from Figma palette */
 }
 
 .cell.active {
-  background: #3e57ff; /* selected answer tiles */
+  background: var(--lighter-color); /* selected answer tiles */
 }
 
 .cell.current {
-  background: #001b80; /* focused cell */
+  background: var(--darker-color); /* focused cell */
 }
 
 .cell.incorrect {
-  background: #80005b;
+  background: var(--incorrect-color);
 }
 
 /* If a cell is both incorrect and current, show lighter color */
 .cell.incorrect.current {
-  background: #80005b;
+  background: var(--incorrect-color);
   opacity: 0.7;
 }
 
@@ -491,7 +498,7 @@
 
 .clue {
   padding: 6px 8px;
-  border-radius: 6px;
+  border-radius: 0px;
   cursor: pointer;
   font-size: 14px;
 }
@@ -501,7 +508,7 @@
 }
 
 .clue.selected {
-  background: #001b80;
+  background: var(--darker-color);
   color: #fcfcfc;
 }
 
@@ -544,7 +551,6 @@
     display: block;
     margin-top: 8px;
     padding: 10px 12px;
-    border-radius: 8px;
     background: #001b80;
     color: #fcfcfc;
     font-size: 16px;
