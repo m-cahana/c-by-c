@@ -752,6 +752,7 @@
   }
   .directory-right {
     padding-top: 0;
+    padding-left: 60px;
   }
   .title {
     text-align: left;
