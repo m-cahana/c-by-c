@@ -948,13 +948,14 @@ function CrosswordGrid({ puzzle }) {
             className="home-btn"
             aria-label="Home"
             onClick={() => (window.location.href = "/directory")}
-          />
-          <div className="puzzle-title" title="Crossword">
+          >
             <img
               src="/logos/crossword_logo_no_whitespace.png"
-              alt="Crossword Logo"
+              alt="Home"
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
-          </div>
+          </button>
+          <div className="puzzle-title" title="Crossword"></div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
               {formatElapsed(elapsedMs)}

@@ -1,8 +1,10 @@
 :root {
-  --darker-color: #001b80;
+  --darker-color: #00207d;
   --lighter-color: #3e57ff;
   --block-color: #000940;
   --incorrect-color: #80005b;
+  --cell-background-color: #ffffff;
+  --grid-background-color: #999;
 }
 
 .App {
@@ -75,6 +77,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  margin-top: 30px;
   margin-bottom: 0px;
   position: relative;
 }
@@ -122,7 +125,7 @@
   height: 24px;
   border-radius: 50%;
   border: 0;
-  background: #000;
+  background: var(--darker-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -162,7 +165,7 @@
   height: 24px;
   border-radius: 50%;
   border: 0;
-  background: #000;
+  background: var(--darker-color);
   color: #fff;
   cursor: pointer;
   display: inline-flex;
@@ -175,11 +178,10 @@
 }
 
 .home-btn {
-  width: 24px;
   height: 24px;
-  border-radius: 50%;
+  width: auto;
   border: 0;
-  background: #000;
+  background: transparent;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -189,17 +191,7 @@
   position: relative;
 }
 
-/* Create home icon using SVG */
-.home-btn::before {
-  content: "";
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 104 100'%3E%3Cpath d='M100.5 40.75V96.5H66V68.5V65H62.5H43H39.5V68.5V96.5H3.5V40.75L52 4.375L100.5 40.75Z' stroke='white' stroke-width='12' fill='none'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
+/* Remove the ::before pseudo-element since we'll use an img tag */
 
 .close-btn {
   width: 18px;
@@ -399,14 +391,14 @@
 .grid {
   display: grid;
   gap: 2px;
-  background: #999;
+  background: var(--grid-background-color);
   aspect-ratio: 1 / 1;
   width: 100%;
   height: auto;
 }
 
 .cell {
-  background: #ffffff;
+  background: var(--cell-background-color);
   position: relative;
 }
 
@@ -673,10 +665,6 @@
   }
   .cell-number {
     font-size: 0.65rem;
-  }
-  .home-btn {
-    width: 18px;
-    height: 18px;
   }
   .topbar .home-btn {
     bottom: 8px;
