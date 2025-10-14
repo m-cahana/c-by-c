@@ -1342,29 +1342,34 @@ function Directory() {
   return (
     <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
       <div className="App">
-        <h1 className="title">Crosswords by Charlie</h1>
-        <div className="directory">
-          <h2 className="subtitle">All puzzles:</h2>
-          {puzzles.length === 0 ? (
-            <p>No puzzles found.</p>
-          ) : (
-            <ul className="puzzle-list">
-              {puzzles.map((puzzle, index) => (
-                <li key={puzzle.name} className="puzzle-item">
-                  <Link
-                    to={
-                      index === 0
-                        ? "/"
-                        : `/puzzle/${encodeURIComponent(puzzle.name)}`
-                    }
-                    className="puzzle-link"
-                  >
-                    {puzzle.name.replace(".puz", "")}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="directory-layout">
+          <div className="directory-left">
+            <h1 className="title">{`Crosswords
+by
+Charlie`}</h1>
+          </div>
+          <div className="directory-right">
+            {puzzles.length === 0 ? (
+              <p>No puzzles found.</p>
+            ) : (
+              <ul className="puzzle-list">
+                {puzzles.map((puzzle, index) => (
+                  <li key={puzzle.name} className="puzzle-item">
+                    <Link
+                      to={
+                        index === 0
+                          ? "/"
+                          : `/puzzle/${encodeURIComponent(puzzle.name)}`
+                      }
+                      className="puzzle-link"
+                    >
+                      {puzzle.name.replace(".puz", "")}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>
