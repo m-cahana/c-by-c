@@ -1173,7 +1173,7 @@ function CrosswordGrid({ puzzle }) {
                 <strong>Puzzle Title:</strong>{" "}
                 {puzzle.meta?.title || "Crossword"}
               </p>
-              <p>
+              <p style={{ textAlign: "left" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
                 nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
                 nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis
