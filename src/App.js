@@ -950,7 +950,10 @@ function CrosswordGrid({ puzzle }) {
             onClick={() => (window.location.href = "/directory")}
           />
           <div className="puzzle-title" title="Crossword">
-            <img src="/logos/crossword_logo.png" alt="Crossword Logo" />
+            <img
+              src="/logos/crossword_logo_no_whitespace.png"
+              alt="Crossword Logo"
+            />
           </div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
