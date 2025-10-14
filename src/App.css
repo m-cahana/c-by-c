@@ -570,7 +570,7 @@
     height: 35svh;
     height: 35dvh;
     padding: 14px 8px;
-    background: #0a2e28;
+    background: #000000;
     color: #fff;
     user-select: none;
     box-sizing: border-box;
@@ -605,7 +605,7 @@
     appearance: none;
     -webkit-appearance: none;
     border: 0;
-    background: #11463e;
+    background: #071d1a;
     color: #fff;
     padding: 0 clamp(8px, 2.6vw, 12px);
     border-radius: 8px;
@@ -620,7 +620,7 @@
     justify-content: center;
   }
   .mobile-key--action {
-    background: #1d6781;
+    background: var(--darker-color);
   }
   .mobile-key--wide {
     flex: 1.2 1 0;
