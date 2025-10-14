@@ -1222,10 +1222,16 @@ function MainPage() {
   const [dataLoaded, setDataLoaded] = React.useState(false);
   const loadStartTime = React.useRef(null);
 
+  // Check if this is the main page (no puzzleName) to avoid double loading animations
+  const isMainPage = !puzzleName;
+
   React.useEffect(() => {
     if (loading) {
       loadStartTime.current = Date.now();
-      setShowLoadingAnimation(true);
+      // Only show loading animation for individual puzzle pages, not main page
+      if (!isMainPage) {
+        setShowLoadingAnimation(true);
+      }
       setShowContent(false);
     } else {
       setShowLoadingAnimation(false);
@@ -1243,7 +1249,7 @@ function MainPage() {
         setShowContent(true);
       }, 100);
     }
-  }, [loading]);
+  }, [loading, isMainPage]);
 
   const handleLoadingComplete = () => {
     setShowLoadingAnimation(false);
