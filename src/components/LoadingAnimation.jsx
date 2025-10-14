@@ -47,6 +47,7 @@ const LoadingAnimation = ({
         clearTimeout(fallbackTimeoutRef.current);
         fallbackTimeoutRef.current = null;
       }
+      console.log("Video can play, using source:", video.currentSrc);
     };
 
     // If data is already loaded and we're not forcing video play, skip the animation
@@ -123,6 +124,7 @@ const LoadingAnimation = ({
           x-webkit-airplay="allow"
           controls={false}
         >
+          <source src="/logos/faster_crossword_safari.mp4" type="video/mp4" />
           <source src="/logos/faster_crossword.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
