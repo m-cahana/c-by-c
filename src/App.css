@@ -478,6 +478,7 @@
   grid-auto-rows: min-content;
   gap: 12px;
   grid-template-columns: 1fr;
+  margin-top: 40px;
 }
 
 .clue-title {
@@ -517,6 +518,12 @@
   font-weight: 600;
   margin-right: 6px;
 }
+
+/* Push the DOWN clue section (second section) further down 
+.clue-section:nth-child(2) {
+  margin-top: 20px;
+}
+*/
 
 .mobile-clue-banner {
   display: none;

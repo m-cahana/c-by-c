@@ -1219,9 +1219,6 @@ function MainPage() {
     : "/C by C 1.puz";
   const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
 
-  // Check if this is the main page (no puzzleName) to avoid double loading animations
-  const isMainPage = !puzzleName;
-
   const {
     showLoadingAnimation,
     showContent,
@@ -1230,7 +1227,6 @@ function MainPage() {
     forceVideoPlay,
   } = useLoadingAnimation({
     loading,
-    skipAnimation: isMainPage, // Skip animation for main page to avoid double loading
   });
 
   if (loading) {
