@@ -757,3 +757,9 @@
     text-align: left;
   }
 }
+
+@media (max-width: 900px) {
+  .cell-number {
+    font-size: 0.8rem;
+  }
+}
