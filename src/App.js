@@ -1,6 +1,7 @@
 import React from "react";
 import MobileKeyboard from "./components/MobileKeyboard";
 import LoadingAnimation from "./components/LoadingAnimation";
+import { useLoadingAnimation } from "./hooks/useLoadingAnimation";
 import { supabase, isSupabaseConfigured } from "./supabase";
 import {
   BrowserRouter,
@@ -1217,47 +1218,20 @@ function MainPage() {
     ? `/puzzles/${decodeURIComponent(puzzleName)}`
     : "/C by C 1.puz";
   const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
-  const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
-  const [showContent, setShowContent] = React.useState(false);
-  const [dataLoaded, setDataLoaded] = React.useState(false);
-  const loadStartTime = React.useRef(null);
 
   // Check if this is the main page (no puzzleName) to avoid double loading animations
   const isMainPage = !puzzleName;
 
-  React.useEffect(() => {
-    if (loading) {
-      loadStartTime.current = Date.now();
-      // Only show loading animation for individual puzzle pages, not main page
-      if (!isMainPage) {
-        setShowLoadingAnimation(true);
-      }
-      setShowContent(false);
-    } else {
-      setShowLoadingAnimation(false);
-
-      // Check if loading was fast (less than 500ms) and mark data as loaded
-      if (loadStartTime.current) {
-        const loadTime = Date.now() - loadStartTime.current;
-        if (loadTime < 500) {
-          setDataLoaded(true);
-        }
-      }
-
-      // Add a small delay before showing content for smooth transition
-      setTimeout(() => {
-        setShowContent(true);
-      }, 100);
-    }
-  }, [loading, isMainPage]);
-
-  const handleLoadingComplete = () => {
-    setShowLoadingAnimation(false);
-    // Add a small delay before showing content for smooth transition
-    setTimeout(() => {
-      setShowContent(true);
-    }, 100);
-  };
+  const {
+    showLoadingAnimation,
+    showContent,
+    dataLoaded,
+    handleLoadingComplete,
+    forceVideoPlay,
+  } = useLoadingAnimation({
+    loading,
+    skipAnimation: isMainPage, // Skip animation for main page to avoid double loading
+  });
 
   if (loading) {
     return (
@@ -1266,6 +1240,7 @@ function MainPage() {
           <LoadingAnimation
             onComplete={handleLoadingComplete}
             dataLoaded={dataLoaded}
+            forceVideoPlay={forceVideoPlay}
           />
         )}
         <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
@@ -1309,24 +1284,23 @@ function Directory() {
   const [puzzles, setPuzzles] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  const [showLoadingAnimation, setShowLoadingAnimation] = React.useState(false);
-  const [showContent, setShowContent] = React.useState(false);
-  const [dataLoaded, setDataLoaded] = React.useState(false);
-  const loadStartTime = React.useRef(null);
+
+  const {
+    showLoadingAnimation,
+    showContent,
+    dataLoaded,
+    handleLoadingComplete,
+    forceVideoPlay,
+  } = useLoadingAnimation({
+    loading,
+  });
 
   React.useEffect(() => {
     async function loadPuzzles() {
       try {
-        loadStartTime.current = Date.now();
         setLoading(true);
         const puzzleList = await fetchAllSupabasePuzzles();
         setPuzzles(puzzleList);
-
-        // Check if loading was fast (less than 500ms) and mark data as loaded
-        const loadTime = Date.now() - loadStartTime.current;
-        if (loadTime < 500) {
-          setDataLoaded(true);
-        }
       } catch (e) {
         setError(e.message);
       } finally {
@@ -1336,27 +1310,6 @@ function Directory() {
     loadPuzzles();
   }, []);
 
-  React.useEffect(() => {
-    if (loading) {
-      setShowLoadingAnimation(true);
-      setShowContent(false);
-    } else {
-      setShowLoadingAnimation(false);
-      // Add a small delay before showing content for smooth transition
-      setTimeout(() => {
-        setShowContent(true);
-      }, 100);
-    }
-  }, [loading]);
-
-  const handleLoadingComplete = () => {
-    setShowLoadingAnimation(false);
-    // Add a small delay before showing content for smooth transition
-    setTimeout(() => {
-      setShowContent(true);
-    }, 100);
-  };
-
   if (loading) {
     return (
       <>
@@ -1364,6 +1317,7 @@ function Directory() {
           <LoadingAnimation
             onComplete={handleLoadingComplete}
             dataLoaded={dataLoaded}
+            forceVideoPlay={forceVideoPlay}
           />
         )}
         <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
@@ -1419,22 +1373,29 @@ function Directory() {
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [showContent, setShowContent] = React.useState(false);
 
-  const handleLoadingComplete = () => {
+  const {
+    showLoadingAnimation,
+    showContent,
+    dataLoaded,
+    handleLoadingComplete,
+    forceVideoPlay,
+  } = useLoadingAnimation({
+    loading: isLoading,
+  });
+
+  const handleAppLoadingComplete = () => {
     setIsLoading(false);
-    // Add a small delay before showing content for smooth transition
-    setTimeout(() => {
-      setShowContent(true);
-    }, 100);
+    handleLoadingComplete();
   };
 
   return (
     <BrowserRouter>
-      {isLoading && (
+      {showLoadingAnimation && (
         <LoadingAnimation
-          onComplete={handleLoadingComplete}
-          forceVideoPlay={true}
+          onComplete={handleAppLoadingComplete}
+          dataLoaded={dataLoaded}
+          forceVideoPlay={forceVideoPlay}
         />
       )}
       <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
