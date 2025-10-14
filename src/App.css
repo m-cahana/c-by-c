@@ -436,6 +436,10 @@
   color: #ffffff;
 }
 
+.cell.current .cell-input {
+  color: #ffffff;
+}
+
 .cell-input {
   width: 100%;
   height: 100%;
@@ -476,6 +480,7 @@
 .clue-title {
   font-size: 14px;
   margin: 0 0 4px;
+  font-style: italic;
 }
 
 .clue-list {
@@ -491,6 +496,7 @@
   border-radius: 0px;
   cursor: pointer;
   font-size: 14px;
+  font-style: italic;
 }
 
 .clue:hover {
@@ -519,6 +525,7 @@
 
 .mobile-clue-banner {
   display: none;
+  font-style: italic;
 }
 
 @media (max-width: 800px) {
@@ -736,10 +743,12 @@
   color: #0a2e28;
   text-decoration: none;
   font-size: 16px;
+  font-style: italic;
+  font-weight: 700;
 }
 
 .puzzle-item:hover .puzzle-link {
-  font-weight: 700;
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
