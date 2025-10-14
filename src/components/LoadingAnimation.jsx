@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./LoadingAnimation.css";
 
-const LoadingAnimation = ({ onComplete, dataLoaded = false }) => {
+const LoadingAnimation = ({
+  onComplete,
+  dataLoaded = false,
+  forceVideoPlay = false,
+}) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
@@ -45,8 +49,8 @@ const LoadingAnimation = ({ onComplete, dataLoaded = false }) => {
       }
     };
 
-    // If data is already loaded, skip the animation
-    if (dataLoaded) {
+    // If data is already loaded and we're not forcing video play, skip the animation
+    if (dataLoaded && !forceVideoPlay) {
       handleVideoEnd();
       return;
     }
@@ -91,7 +95,7 @@ const LoadingAnimation = ({ onComplete, dataLoaded = false }) => {
         clearTimeout(fallbackTimeoutRef.current);
       }
     };
-  }, [onComplete, dataLoaded]);
+  }, [onComplete, dataLoaded, forceVideoPlay]);
 
   if (!isVisible) {
     return null;

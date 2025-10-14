@@ -1425,7 +1425,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      {isLoading && <LoadingAnimation onComplete={handleLoadingComplete} />}
+      {isLoading && (
+        <LoadingAnimation
+          onComplete={handleLoadingComplete}
+          forceVideoPlay={true}
+        />
+      )}
       <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
         <Routes>
           <Route path="/" element={<MainPage />} />
