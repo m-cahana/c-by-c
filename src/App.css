@@ -478,7 +478,7 @@
   grid-auto-rows: min-content;
   gap: 12px;
   grid-template-columns: 1fr;
-  margin-top: 40px;
+  margin-top: 25px;
 }
 
 .clue-title {
