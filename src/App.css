@@ -70,6 +70,8 @@
   position: absolute;
   left: 0;
   bottom: 6px;
+  transform: translateX(0);
+  z-index: 1;
 }
 
 .topbar {
@@ -567,6 +569,14 @@
   }
   .topbar {
     gap: 8px;
+    margin-top: 36px;
+  }
+  .topbar .home-btn {
+    position: absolute;
+    left: 0 !important;
+    bottom: 6px;
+    transform: translateX(0) !important;
+    z-index: 1;
   }
   .modal-backdrop {
     align-items: flex-start;
@@ -727,6 +737,8 @@
   }
   .topbar .home-btn {
     bottom: 8px;
+    left: 0 !important;
+    transform: translateX(0) !important;
   }
   .topbar-right {
     bottom: 8px;
