@@ -1278,7 +1278,7 @@ function MainPage() {
   const { puzzleName } = useParams();
   const fallbackUrl = puzzleName
     ? `/puzzles/${decodeURIComponent(puzzleName)}`
-    : "/C by C 1.puz";
+    : "/default_puzzle.puz";
   const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
 
   const {
