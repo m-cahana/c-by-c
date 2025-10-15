@@ -742,14 +742,6 @@ a {
   .topbar-right {
     bottom: 8px;
   }
-  .dot-btn {
-    width: 18px;
-    height: 18px;
-  }
-  .info-btn {
-    width: 18px;
-    height: 18px;
-  }
 }
 
 @media (min-width: 1200px) {
