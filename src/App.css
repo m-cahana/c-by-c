@@ -37,11 +37,6 @@
   white-space: pre-line;
 }
 
-a {
-  text-decoration-color: var(--darker-color);
-  color: var(--darker-color);
-}
-
 .status {
   padding: 16px;
 }
@@ -75,8 +70,6 @@ a {
   position: absolute;
   left: 0;
   bottom: 6px;
-  transform: translateX(0);
-  z-index: 1;
 }
 
 .topbar {
@@ -96,6 +89,23 @@ a {
   position: absolute;
   right: 0;
   bottom: 6px;
+}
+
+.puzzle-title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0a2e28;
+  text-align: center;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.puzzle-title img {
+  height: 36px;
+  width: auto;
 }
 
 .timer {
@@ -378,30 +388,6 @@ a {
   right: 12px;
 }
 
-.modal-title {
-  font-size: 24px;
-  font-weight: 700;
-  font-style: italic;
-  margin-top: 0;
-}
-
-.modal-subtitle {
-  font-size: 18px;
-  margin-top: 0;
-  font-style: italic;
-}
-
-.modal-text {
-  font-size: 16px;
-  margin-top: 0;
-}
-
-.modal-text-long {
-  font-size: 16px;
-  margin-top: 0;
-  text-align: left;
-}
-
 .grid {
   display: grid;
   gap: 2px;
@@ -557,14 +543,6 @@ a {
   }
   .topbar {
     gap: 8px;
-    margin-top: 36px;
-  }
-  .topbar .home-btn {
-    position: absolute;
-    left: 0 !important;
-    bottom: 6px;
-    transform: translateX(0) !important;
-    z-index: 1;
   }
   .modal-backdrop {
     align-items: flex-start;
@@ -573,45 +551,17 @@ a {
     display: none;
   }
   .mobile-clue-banner {
-    display: flex;
-    align-items: center;
+    display: block;
     margin-top: 8px;
     padding: 10px 12px;
     background: #001b80;
     color: #fcfcfc;
     font-size: 16px;
-    position: relative;
   }
   .mobile-clue-banner .clue-dir {
     font-weight: 700;
     margin-right: 6px;
     text-transform: uppercase;
-  }
-  .clue-nav-arrow {
-    background: none;
-    border: none;
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 4px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    height: 32px;
-    border-radius: 4px;
-  }
-  .clue-nav-arrow-left {
-    margin-right: 8px;
-  }
-  .clue-nav-arrow-right {
-    margin-left: 8px;
-  }
-  .clue-text {
-    flex: 1;
-    text-align: center;
-    padding: 0 8px;
   }
 
   .mobile-keyboard {
@@ -725,8 +675,6 @@ a {
   }
   .topbar .home-btn {
     bottom: 8px;
-    left: 0 !important;
-    transform: translateX(0) !important;
   }
   .topbar-right {
     bottom: 8px;

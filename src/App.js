@@ -9,7 +9,6 @@ import {
   Route,
   Link,
   useParams,
-  useNavigate,
 } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
 import { Analytics } from "@vercel/analytics/react";
@@ -203,7 +202,6 @@ function ClueList({ title, entries, currentNumber, onSelect }) {
 // AdminUpload moved to ./components/AdminUpload.jsx
 
 function CrosswordGrid({ puzzle }) {
-  const navigate = useNavigate();
   const rows = puzzle.grid.length;
   const cols = puzzle.grid[0].length;
   const numbering = React.useMemo(() => computeNumbering(puzzle), [puzzle]);
@@ -752,47 +750,6 @@ function CrosswordGrid({ puzzle }) {
     }
   }, [dir, clueNumber, numbering, setSelectionByNumber]);
 
-  // Navigation functions for mobile clue banner arrows
-  const goToPreviousClue = React.useCallback(() => {
-    const currentList = dir === "across" ? numbering.across : numbering.down;
-    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
-
-    if (currentIndex > 0) {
-      // Move to previous clue in current direction
-      const prevClue = currentList[currentIndex - 1];
-      setSelectionByNumber(dir, prevClue.number);
-    } else {
-      // No more clues in current direction, switch to other direction and go to last clue
-      const otherDir = dir === "across" ? "down" : "across";
-      const otherList =
-        otherDir === "across" ? numbering.across : numbering.down;
-      if (otherList.length > 0) {
-        const lastClue = otherList[otherList.length - 1];
-        setSelectionByNumber(otherDir, lastClue.number);
-      }
-    }
-  }, [dir, clueNumber, numbering, setSelectionByNumber]);
-
-  const goToNextClue = React.useCallback(() => {
-    const currentList = dir === "across" ? numbering.across : numbering.down;
-    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
-
-    if (currentIndex !== -1 && currentIndex < currentList.length - 1) {
-      // Move to next clue in current direction
-      const nextClue = currentList[currentIndex + 1];
-      setSelectionByNumber(dir, nextClue.number);
-    } else {
-      // No more clues in current direction, switch to other direction and go to first clue
-      const otherDir = dir === "across" ? "down" : "across";
-      const otherList =
-        otherDir === "across" ? numbering.across : numbering.down;
-      if (otherList.length > 0) {
-        const firstClue = otherList[0];
-        setSelectionByNumber(otherDir, firstClue.number);
-      }
-    }
-  }, [dir, clueNumber, numbering, setSelectionByNumber]);
-
   React.useEffect(() => {
     if (!isSmallScreen) return; // only for mobile to support hardware keyboards
     function onDocKey(e) {
@@ -990,7 +947,7 @@ function CrosswordGrid({ puzzle }) {
           <button
             className="home-btn"
             aria-label="Home"
-            onClick={() => navigate("/directory")}
+            onClick={() => (window.location.href = "/directory")}
           >
             <img
               src="/logos/crossword_logo_no_whitespace.png"
@@ -998,6 +955,7 @@ function CrosswordGrid({ puzzle }) {
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </button>
+          <div className="puzzle-title" title="Crossword"></div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
               {formatElapsed(elapsedMs)}
@@ -1188,23 +1146,7 @@ function CrosswordGrid({ puzzle }) {
           )}
         </div>
         {clueNumber && (
-          <div className="mobile-clue-banner">
-            <button
-              className="clue-nav-arrow clue-nav-arrow-left"
-              onClick={goToPreviousClue}
-              aria-label="Previous clue"
-            >
-              ‹
-            </button>
-            <span className="clue-text">{currentEntry?.clue || ""}</span>
-            <button
-              className="clue-nav-arrow clue-nav-arrow-right"
-              onClick={goToNextClue}
-              aria-label="Next clue"
-            >
-              ›
-            </button>
-          </div>
+          <div className="mobile-clue-banner">{currentEntry?.clue || ""}</div>
         )}
         {showCongrats && (
           <div
@@ -1217,10 +1159,8 @@ function CrosswordGrid({ puzzle }) {
                 aria-label="Close"
                 onClick={() => setShowCongrats(false)}
               />
-              <h3 className="modal-title">Good work!</h3>
-              <p className="modal-text">
-                You've completed the puzzle in {formatElapsed(elapsedMs)}.
-              </p>
+              <h3 style={{ marginTop: 0 }}>Good work!</h3>
+              <p>You've completed the puzzle in {formatElapsed(elapsedMs)}.</p>
             </div>
           </div>
         )}
@@ -1232,18 +1172,19 @@ function CrosswordGrid({ puzzle }) {
                 aria-label="Close"
                 onClick={() => setShowInfo(false)}
               />
-              <h3 className="modal-title">Crosswords by Charlie</h3>
-              <p className="modal-subtitle">{puzzle.meta?.title}</p>
-              <p className="modal-text-long">
-                CxC aims to infuse the stuffy world of crossword solving with
-                topical clues from contemporary fashion, pop culture and art.
-                Check out the weekly newsletter to get each puzzle (and solving
-                tips), explore the archive <a href="/directory">here</a>, and
-                share your times on{" "}
-                <a href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr">
-                  IG
-                </a>
-                .
+              <h3 style={{ marginTop: 0 }}>Crosswords by Charlie</h3>
+              <p>
+                <strong>Puzzle Title:</strong>{" "}
+                {puzzle.meta?.title || "Crossword"}
+              </p>
+              <p style={{ textAlign: "left" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
+                nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis
+                ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+                Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent
+                taciti sociosqu ad litora torquent per conubia nostra, per
+                inceptos himenaeos.
               </p>
             </div>
           </div>
