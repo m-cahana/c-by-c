@@ -382,6 +382,30 @@
   position: relative;
 }
 
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  font-style: italic;
+  margin-top: 0;
+}
+
+.modal-subtitle {
+  font-size: 18px;
+  margin-top: 0;
+  font-style: italic;
+}
+
+.modal-text {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+.modal-text-long {
+  font-size: 16px;
+  margin-top: 0;
+  text-align: left;
+}
+
 .modal-close {
   position: absolute;
   top: 12px;

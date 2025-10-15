@@ -1216,8 +1216,10 @@ function CrosswordGrid({ puzzle }) {
                 aria-label="Close"
                 onClick={() => setShowCongrats(false)}
               />
-              <h3 style={{ marginTop: 0 }}>Good work!</h3>
-              <p>You've completed the puzzle in {formatElapsed(elapsedMs)}.</p>
+              <h3 className="modal-title">Good work!</h3>
+              <p className="modal-text">
+                You've completed the puzzle in {formatElapsed(elapsedMs)}.
+              </p>
             </div>
           </div>
         )}
@@ -1229,19 +1231,13 @@ function CrosswordGrid({ puzzle }) {
                 aria-label="Close"
                 onClick={() => setShowInfo(false)}
               />
-              <h3 style={{ marginTop: 0 }}>Crosswords by Charlie</h3>
-              <p>
-                <strong>Puzzle Title:</strong>{" "}
-                {puzzle.meta?.title || "Crossword"}
-              </p>
-              <p style={{ textAlign: "left" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-                nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
-                nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis
-                ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
-                Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent
-                taciti sociosqu ad litora torquent per conubia nostra, per
-                inceptos himenaeos.
+              <h3 className="modal-title">Crosswords by Charlie</h3>
+              <p className="modal-subtitle">{puzzle.meta?.title}</p>
+              <p className="modal-text-long">
+                CxC aims to infuse the stuffy world of crossword solving with
+                topical clues from contemporary fashion, pop culture and art.
+                Check out the weekly newsletter to get each puzzle (and solving
+                tips), explore the archive here, and share your times on IG.
               </p>
             </div>
           </div>
