@@ -93,23 +93,6 @@
   bottom: 6px;
 }
 
-.puzzle-title {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #0a2e28;
-  text-align: center;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.puzzle-title img {
-  height: 36px;
-  width: auto;
-}
-
 .timer {
   font-variant-numeric: tabular-nums;
   font-size: 14px;

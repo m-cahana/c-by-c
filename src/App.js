@@ -996,7 +996,6 @@ function CrosswordGrid({ puzzle }) {
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </button>
-          <div className="puzzle-title" title="Crossword"></div>
           <div className="topbar-right">
             <div className="timer" aria-label="elapsed time">
               {formatElapsed(elapsedMs)}
