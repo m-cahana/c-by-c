@@ -724,7 +724,7 @@
     transform: translateZ(0);
   }
   .cell-number {
-    font-size: 0.65rem;
+    font-size: 0.65rem !important;
   }
   .topbar .home-btn {
     bottom: 8px;
