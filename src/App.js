@@ -750,6 +750,47 @@ function CrosswordGrid({ puzzle }) {
     }
   }, [dir, clueNumber, numbering, setSelectionByNumber]);
 
+  // Navigation functions for mobile clue banner arrows
+  const goToPreviousClue = React.useCallback(() => {
+    const currentList = dir === "across" ? numbering.across : numbering.down;
+    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
+
+    if (currentIndex > 0) {
+      // Move to previous clue in current direction
+      const prevClue = currentList[currentIndex - 1];
+      setSelectionByNumber(dir, prevClue.number);
+    } else {
+      // No more clues in current direction, switch to other direction and go to last clue
+      const otherDir = dir === "across" ? "down" : "across";
+      const otherList =
+        otherDir === "across" ? numbering.across : numbering.down;
+      if (otherList.length > 0) {
+        const lastClue = otherList[otherList.length - 1];
+        setSelectionByNumber(otherDir, lastClue.number);
+      }
+    }
+  }, [dir, clueNumber, numbering, setSelectionByNumber]);
+
+  const goToNextClue = React.useCallback(() => {
+    const currentList = dir === "across" ? numbering.across : numbering.down;
+    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
+
+    if (currentIndex !== -1 && currentIndex < currentList.length - 1) {
+      // Move to next clue in current direction
+      const nextClue = currentList[currentIndex + 1];
+      setSelectionByNumber(dir, nextClue.number);
+    } else {
+      // No more clues in current direction, switch to other direction and go to first clue
+      const otherDir = dir === "across" ? "down" : "across";
+      const otherList =
+        otherDir === "across" ? numbering.across : numbering.down;
+      if (otherList.length > 0) {
+        const firstClue = otherList[0];
+        setSelectionByNumber(otherDir, firstClue.number);
+      }
+    }
+  }, [dir, clueNumber, numbering, setSelectionByNumber]);
+
   React.useEffect(() => {
     if (!isSmallScreen) return; // only for mobile to support hardware keyboards
     function onDocKey(e) {
@@ -1146,7 +1187,23 @@ function CrosswordGrid({ puzzle }) {
           )}
         </div>
         {clueNumber && (
-          <div className="mobile-clue-banner">{currentEntry?.clue || ""}</div>
+          <div className="mobile-clue-banner">
+            <button
+              className="clue-nav-arrow clue-nav-arrow-left"
+              onClick={goToPreviousClue}
+              aria-label="Previous clue"
+            >
+              ‹
+            </button>
+            <span className="clue-text">{currentEntry?.clue || ""}</span>
+            <button
+              className="clue-nav-arrow clue-nav-arrow-right"
+              onClick={goToNextClue}
+              aria-label="Next clue"
+            >
+              ›
+            </button>
+          </div>
         )}
         {showCongrats && (
           <div
