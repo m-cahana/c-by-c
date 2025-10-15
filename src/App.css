@@ -71,29 +71,29 @@ a {
   margin-bottom: 2px;
 }
 
-.topbar .home-btn {
-  position: absolute;
-  left: 0;
-  bottom: 6px;
-}
-
-.topbar {
+/* Left container for home button */
+/* Header layout replacing topbar */
+.header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
   margin-top: 30px;
-  margin-bottom: 0px;
-  position: relative;
+  margin-bottom: 6px;
 }
 
-.topbar-right {
-  display: inline-flex;
+.header-left {
+  display: flex;
   align-items: center;
   gap: 10px;
-  position: absolute;
-  right: 0;
-  bottom: 6px;
+  flex: 0 0 auto;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
 }
 
 .puzzle-title {
@@ -193,7 +193,11 @@ a {
   justify-content: center;
   padding: 0;
   line-height: 1;
-  position: relative;
+}
+
+.home-btn-img {
+  height: 24px;
+  width: auto;
 }
 
 /* Remove the ::before pseudo-element since we'll use an img tag */
@@ -570,7 +574,7 @@ a {
   .layout {
     grid-template-columns: 1fr;
   }
-  .topbar {
+  .header {
     gap: 8px;
     margin-top: 36px;
   }
@@ -735,16 +739,6 @@ a {
   }
   .cell-number {
     font-size: 0.65rem !important;
-  }
-  .topbar .home-btn {
-    position: absolute !important;
-    left: 0 !important;
-    right: auto !important;
-    bottom: 8px;
-    transform: none;
-  }
-  .topbar-right {
-    bottom: 8px;
   }
 }
 

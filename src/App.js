@@ -984,20 +984,21 @@ function CrosswordGrid({ puzzle }) {
   return (
     <div className="layout">
       <div className="crossword">
-        <div className="topbar">
-          <button
-            className="home-btn"
-            aria-label="Home"
-            onClick={() => (window.location.href = "/archive")}
-          >
-            <img
-              src="/logos/crossword_logo_no_whitespace.png"
-              alt="Home"
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            />
-          </button>
-          <div className="puzzle-title" title="Crossword"></div>
-          <div className="topbar-right">
+        <div className="header">
+          <div className="header-left">
+            <button
+              className="home-btn"
+              aria-label="Home"
+              onClick={() => (window.location.href = "/archive")}
+            >
+              <img
+                className="home-btn-img"
+                src="/logos/crossword_logo_no_whitespace.png"
+                alt="Home"
+              />
+            </button>
+          </div>
+          <div className="header-right">
             <div className="timer" aria-label="elapsed time">
               {formatElapsed(elapsedMs)}
             </div>
