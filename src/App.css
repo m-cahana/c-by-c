@@ -575,10 +575,12 @@ a {
     margin-top: 36px;
   }
   .modal-backdrop {
-    align-items: flex-start;
-    padding-top: 20vh;
-    padding-top: 20svh;
-    padding-top: 20dvh;
+    align-items: center;
+    padding: 0 16px;
+    /* Center modal in the available space above the keyboard */
+    height: 65vh;
+    height: 65svh;
+    height: 65dvh;
   }
   .clues {
     display: none;
