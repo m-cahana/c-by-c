@@ -37,6 +37,11 @@
   white-space: pre-line;
 }
 
+a {
+  text-decoration-color: var(--darker-color);
+  color: var(--darker-color);
+}
+
 .status {
   padding: 16px;
 }

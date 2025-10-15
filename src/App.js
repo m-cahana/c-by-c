@@ -1236,7 +1236,12 @@ function CrosswordGrid({ puzzle }) {
                 CxC aims to infuse the stuffy world of crossword solving with
                 topical clues from contemporary fashion, pop culture and art.
                 Check out the weekly newsletter to get each puzzle (and solving
-                tips), explore the archive here, and share your times on IG.
+                tips), explore the archive <a href="/directory">here</a>, and
+                share your times on{" "}
+                <a href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr">
+                  IG
+                </a>
+                .
               </p>
             </div>
           </div>
