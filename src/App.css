@@ -567,6 +567,7 @@
   }
   .topbar {
     gap: 8px;
+    margin-top: 36px;
   }
   .modal-backdrop {
     align-items: flex-start;
