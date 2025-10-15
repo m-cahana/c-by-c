@@ -9,6 +9,7 @@ import {
   Route,
   Link,
   useParams,
+  useNavigate,
 } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
 import { Analytics } from "@vercel/analytics/react";
@@ -202,6 +203,7 @@ function ClueList({ title, entries, currentNumber, onSelect }) {
 // AdminUpload moved to ./components/AdminUpload.jsx
 
 function CrosswordGrid({ puzzle }) {
+  const navigate = useNavigate();
   const rows = puzzle.grid.length;
   const cols = puzzle.grid[0].length;
   const numbering = React.useMemo(() => computeNumbering(puzzle), [puzzle]);
@@ -988,7 +990,7 @@ function CrosswordGrid({ puzzle }) {
           <button
             className="home-btn"
             aria-label="Home"
-            onClick={() => (window.location.href = "/directory")}
+            onClick={() => navigate("/directory")}
           >
             <img
               src="/logos/crossword_logo_no_whitespace.png"
