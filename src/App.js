@@ -988,7 +988,7 @@ function CrosswordGrid({ puzzle }) {
           <button
             className="home-btn"
             aria-label="Home"
-            onClick={() => (window.location.href = "/directory")}
+            onClick={() => (window.location.href = "/archive")}
           >
             <img
               src="/logos/crossword_logo_no_whitespace.png"
@@ -1237,7 +1237,7 @@ function CrosswordGrid({ puzzle }) {
                 CxC aims to infuse the stuffy world of crossword solving with
                 topical clues from contemporary fashion, pop culture and art.
                 Check out the weekly newsletter to get each puzzle (and solving
-                tips), explore the archive <a href="/directory">here</a>, and
+                tips), explore the archive <a href="/archive">here</a>, and
                 share your times on{" "}
                 <a href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr">
                   IG
@@ -1338,7 +1338,7 @@ function AdminPage() {
   );
 }
 
-function Directory() {
+function Archive() {
   const [puzzles, setPuzzles] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
@@ -1400,13 +1400,13 @@ function Directory() {
   return (
     <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
       <div className="App">
-        <div className="directory-layout">
-          <div className="directory-left">
+        <div className="archive-layout">
+          <div className="archive-left">
             <h1 className="title">{`Crosswords
 by
 Charlie`}</h1>
           </div>
-          <div className="directory-right">
+          <div className="archive-right">
             {puzzles.length === 0 ? (
               <p>No puzzles found.</p>
             ) : (
@@ -1464,7 +1464,7 @@ function App() {
       <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/directory" element={<Directory />} />
+          <Route path="/archive" element={<Archive />} />
           <Route path="/puzzle/:puzzleName" element={<MainPage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
