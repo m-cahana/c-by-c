@@ -576,6 +576,9 @@ a {
   }
   .modal-backdrop {
     align-items: flex-start;
+    padding-top: 20vh;
+    padding-top: 20svh;
+    padding-top: 20dvh;
   }
   .clues {
     display: none;
