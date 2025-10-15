@@ -1239,7 +1239,11 @@ function CrosswordGrid({ puzzle }) {
                 Check out the weekly newsletter to get each puzzle (and solving
                 tips), explore the archive <a href="/archive">here</a>, and
                 share your times on{" "}
-                <a href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr">
+                <a
+                  href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   IG
                 </a>
                 .
