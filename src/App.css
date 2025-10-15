@@ -738,7 +738,10 @@ a {
   }
   .topbar .home-btn {
     position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
     bottom: 8px;
+    transform: none;
   }
   .topbar-right {
     bottom: 8px;
