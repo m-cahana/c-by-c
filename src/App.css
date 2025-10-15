@@ -78,7 +78,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 30px;
+  margin-top: 0px;
   margin-bottom: 6px;
 }
 
@@ -576,7 +576,7 @@ a {
   }
   .header {
     gap: 8px;
-    margin-top: 36px;
+    margin-top: 0px;
   }
   .modal-backdrop {
     align-items: center;
