@@ -1358,7 +1358,32 @@ function Archive() {
       try {
         setLoading(true);
         const puzzleList = await fetchAllSupabasePuzzles();
-        setPuzzles(puzzleList);
+
+        // Decode each puzzle to get its metadata
+        const puzzlesWithTitles = await Promise.all(
+          puzzleList.map(async (puzzleFile) => {
+            try {
+              const { arrayBuffer } = await fetchSpecificSupabasePuzzle(
+                puzzleFile.name
+              );
+              const { decode } = require("puzjs");
+              const decoded = decode(arrayBuffer);
+              return {
+                ...puzzleFile,
+                title:
+                  decoded.meta?.title || puzzleFile.name.replace(".puz", ""),
+              };
+            } catch (e) {
+              // If decoding fails, fall back to filename
+              return {
+                ...puzzleFile,
+                title: puzzleFile.name.replace(".puz", ""),
+              };
+            }
+          })
+        );
+
+        setPuzzles(puzzlesWithTitles);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -1421,7 +1446,7 @@ Charlie`}</h1>
                       }
                       className="puzzle-link"
                     >
-                      {puzzle.name.replace(".puz", "")}
+                      {puzzle.title}
                     </Link>
                   </li>
                 ))}
