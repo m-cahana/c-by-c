@@ -831,6 +831,12 @@ a {
   text-decoration: underline;
 }
 
+@media (max-width: 1200px) {
+  .archive-layout {
+    grid-template-columns: 1fr 0.5fr 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .archive-layout {
     grid-template-columns: 1fr;
