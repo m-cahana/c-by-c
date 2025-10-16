@@ -1435,17 +1435,17 @@ function Archive() {
             <h1 className="title">
               Crosswords
               <br />
-              by
-              <br />
-              Charlie
+              by{" "}
               <img
                 className="archive-logo-inline"
-                src="/logos/blue_yellow_boxy_logo.png"
+                src="/logos/crossword_logo_no_whitespace.png"
                 alt="Crossword Logo"
               />
+              <br />
+              Charlie
             </h1>
           </div>
-          <div className="archive-right">
+          <div className="archive-middle">
             {puzzles.length === 0 ? (
               <p>No puzzles found.</p>
             ) : (
@@ -1466,6 +1466,23 @@ function Archive() {
                 ))}
               </ul>
             )}
+          </div>
+          <div className="archive-right">
+            <p>
+              CxC aims to infuse the stuffy world of crossword solving with
+              topical clues from contemporary fashion, pop culture and art.
+              Check out the weekly newsletter to get each puzzle (and solving
+              tips), explore the archive <a href="/archive">here</a>, and share
+              your times on{" "}
+              <a
+                href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                IG
+              </a>
+              .
+            </p>
           </div>
         </div>
       </div>

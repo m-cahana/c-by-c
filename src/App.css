@@ -765,10 +765,12 @@ a {
 /* Archive page styles */
 .archive-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 1fr 0.4fr 1fr;
+  column-gap: 0px;
+  row-gap: 10px;
   align-items: start;
-  max-width: 1000px;
+  max-width: 1200px;
+  padding-top: 100px;
 }
 
 .archive-left {
@@ -777,19 +779,34 @@ a {
   justify-content: right;
 }
 
-.archive-right {
+.archive-middle {
   display: flex;
   flex-direction: column;
   padding-top: 70px;
+  padding-right: 0px;
+}
+
+.archive-right {
+  display: flex;
+  flex-direction: column;
+  padding-top: 30px;
+  padding-left: 0px;
+}
+
+.archive-right p {
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.6;
+  color: #0a2e28;
+  margin: 0;
+  text-align: left;
 }
 
 .archive-logo-inline {
-  height: 70px;
+  height: 40px;
   width: auto;
-  position: absolute;
-  bottom: 0.6em;
-  z-index: 10;
-  margin-left: 0.5em;
+  vertical-align: middle;
+  margin: 0 0.5em;
 }
 
 .puzzle-list {
@@ -818,14 +835,23 @@ a {
   .archive-layout {
     grid-template-columns: 1fr;
     gap: 20px;
+    padding-top: 0px;
   }
 
   .archive-left {
     justify-content: flex-start;
+    order: 1;
   }
+
+  .archive-middle {
+    padding-top: 0px;
+    padding-left: 60px;
+    order: 2;
+  }
+
   .archive-right {
     padding-top: 0;
-    padding-left: 60px;
+    order: 3;
   }
   .title {
     text-align: left;
