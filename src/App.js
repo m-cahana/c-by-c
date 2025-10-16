@@ -993,7 +993,7 @@ function CrosswordGrid({ puzzle }) {
             >
               <img
                 className="home-btn-img"
-                src="/logos/crossword_logo_no_whitespace.png"
+                src="/logos/crossword_logo_yellow.png"
                 alt="Home"
               />
             </button>
@@ -1438,7 +1438,7 @@ function Archive() {
               by{" "}
               <img
                 className="archive-logo-inline"
-                src="/logos/crossword_logo_no_whitespace.png"
+                src="/logos/crossword_logo_yellow.png"
                 alt="Crossword Logo"
               />
               <br />

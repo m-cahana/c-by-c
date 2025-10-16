@@ -1,10 +1,14 @@
 :root {
   --darker-color: #00207d;
-  --lighter-color: #3e57ff;
+  --lighter-color: #ffff86;
   --block-color: #000940;
   --incorrect-color: #80005b;
   --cell-background-color: #ffffff;
   --grid-background-color: #999;
+  --button-background-color: #ffff86;
+  --button-icon-color: #000940; /* Color for icons inside buttons */
+  --website-background-color: #1e1b4b; /* Add this for website background */
+  --text-color: #ffffff; /* Global text color */
 }
 
 .App {
@@ -27,8 +31,8 @@
 }
 
 a {
-  text-decoration-color: var(--darker-color);
-  color: var(--darker-color);
+  text-decoration-color: var(--button-background-color);
+  color: var(--button-background-color);
 }
 
 .content-top {
@@ -101,7 +105,7 @@ a {
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
-  color: #0a2e28;
+  color: var(--text-color);
   text-align: center;
   margin: 0;
   overflow: hidden;
@@ -117,7 +121,7 @@ a {
 .timer {
   font-variant-numeric: tabular-nums;
   font-size: 14px;
-  color: #0a2e28;
+  color: var(--text-color);
 }
 
 .dotmenu {
@@ -131,7 +135,7 @@ a {
   height: 24px;
   border-radius: 50%;
   border: 0;
-  background: var(--darker-color);
+  background: var(--button-background-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -151,16 +155,16 @@ a {
     to bottom,
     transparent 0px,
     transparent 1px,
-    #fff 1px,
-    #fff 2px,
+    var(--button-icon-color) 1px,
+    var(--button-icon-color) 2px,
     transparent 2px,
     transparent 3px,
-    #fff 3px,
-    #fff 4px,
+    var(--button-icon-color) 3px,
+    var(--button-icon-color) 4px,
     transparent 4px,
     transparent 5px,
-    #fff 5px,
-    #fff 6px,
+    var(--button-icon-color) 5px,
+    var(--button-icon-color) 6px,
     transparent 6px
   );
   border-radius: 1px;
@@ -171,8 +175,8 @@ a {
   height: 24px;
   border-radius: 50%;
   border: 0;
-  background: var(--darker-color);
-  color: #fff;
+  background: var(--button-background-color);
+  color: var(--button-icon-color); /* Uses CSS variable for icon color */
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -197,7 +201,7 @@ a {
 }
 
 .home-btn-img {
-  height: 24px;
+  height: 30px;
   width: auto;
 }
 
@@ -208,7 +212,7 @@ a {
   height: 18px;
   border-radius: 50%;
   border: 0;
-  background: #000;
+  background: var(--button-background-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -224,7 +228,7 @@ a {
   position: absolute;
   width: 8px;
   height: 2px;
-  background: #fff;
+  background: var(--button-icon-color);
   transform: rotate(45deg);
 }
 
@@ -233,7 +237,7 @@ a {
   position: absolute;
   width: 8px;
   height: 2px;
-  background: #fff;
+  background: var(--button-icon-color);
   transform: rotate(-45deg);
 }
 
@@ -243,7 +247,7 @@ a {
   top: 100%;
   margin-top: 8px;
   background: #fff;
-  color: #0a2e28;
+  color: var(--text-color);
   border: 1px solid #e2e8f0;
   border-radius: 2px;
   min-width: 180px;
@@ -280,7 +284,7 @@ a {
 .dotmenu-back {
   background: none;
   border: 0;
-  color: var(--lighter-color);
+  color: var(--darker-color);
   text-align: left;
   padding: 6px 10px;
   cursor: pointer;
@@ -298,7 +302,7 @@ a {
 
 .group-label {
   font-size: 12px;
-  color: #475569;
+  color: var(--text-color);
   margin-right: 2px;
 }
 
@@ -323,7 +327,7 @@ a {
 
 .admin-status {
   font-size: 12px;
-  color: #475569;
+  color: var(--text-color);
 }
 
 .admin-login {
@@ -382,8 +386,8 @@ a {
 }
 
 .modal {
-  background: #fff;
-  color: #0a2e28;
+  background: var(--website-background-color);
+  color: var(--text-color);
   border-radius: 2px;
   padding: 20px 24px;
   max-width: 420px;
@@ -397,12 +401,14 @@ a {
   font-weight: 700;
   font-style: italic;
   margin-top: 0;
+  color: var(--button-background-color);
 }
 
 .modal-subtitle {
   font-size: 18px;
   margin-top: 0;
   font-style: italic;
+  color: var(--button-background-color);
 }
 
 .modal-text {
@@ -515,6 +521,7 @@ a {
   font-size: 14px;
   margin: 0 0 4px;
   font-style: italic;
+  color: var(--button-background-color);
 }
 
 .clue-list {
@@ -539,7 +546,7 @@ a {
 
 .clue.selected {
   background: var(--darker-color);
-  color: #fcfcfc;
+  color: var(--button-background-color);
 }
 
 .clue.selected:hover {
@@ -595,8 +602,8 @@ a {
     align-items: center;
     margin-top: 8px;
     padding: 10px 12px;
-    background: #001b80;
-    color: #fcfcfc;
+    background: var(--darker-color);
+    color: var(--button-background-color);
     font-size: 16px;
     position: relative;
   }
@@ -608,7 +615,7 @@ a {
   .clue-nav-arrow {
     background: none;
     border: none;
-    color: #ffffff;
+    color: var(--button-background-color);
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
@@ -797,7 +804,7 @@ a {
   font-size: 16px;
   font-style: italic;
   line-height: 1.6;
-  color: #0a2e28;
+  color: var(--text-color);
   margin: 0;
   text-align: left;
 }
@@ -820,7 +827,7 @@ a {
 }
 
 .puzzle-link {
-  color: #0a2e28;
+  color: var(--text-color);
   text-decoration: none;
   font-size: 16px;
   font-style: italic;
@@ -829,6 +836,7 @@ a {
 
 .puzzle-item:hover .puzzle-link {
   text-decoration: underline;
+  color: var(--button-background-color);
 }
 
 @media (max-width: 1200px) {
