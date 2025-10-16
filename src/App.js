@@ -1435,14 +1435,14 @@ function Archive() {
             <h1 className="title">
               Crosswords
               <br />
-              by{" "}
-              <img
-                className="archive-logo-inline"
-                src="/logos/crossword_logo_no_whitespace.png"
-                alt="Crossword Logo"
-              />
+              by
               <br />
               Charlie
+              <img
+                className="archive-logo-inline"
+                src="/logos/blue_yellow_boxy_logo.png"
+                alt="Crossword Logo"
+              />
             </h1>
           </div>
           <div className="archive-right">

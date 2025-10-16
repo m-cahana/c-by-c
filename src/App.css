@@ -40,6 +40,7 @@ a {
   margin: 0;
   text-align: left;
   white-space: pre-line;
+  position: relative;
 }
 
 .status {
@@ -783,10 +784,12 @@ a {
 }
 
 .archive-logo-inline {
-  height: 40px;
+  height: 70px;
   width: auto;
-  vertical-align: middle;
-  margin: 0 0.5em;
+  position: absolute;
+  bottom: 0.6em;
+  z-index: 10;
+  margin-left: 0.5em;
 }
 
 .puzzle-list {
