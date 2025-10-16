@@ -1432,9 +1432,18 @@ function Archive() {
       <div className="App">
         <div className="archive-layout">
           <div className="archive-left">
-            <h1 className="title">{`Crosswords
-by
-Charlie`}</h1>
+            <h1 className="title">
+              Crosswords
+              <br />
+              by{" "}
+              <img
+                className="archive-logo-inline"
+                src="/logos/crossword_logo_no_whitespace.png"
+                alt="Crossword Logo"
+              />
+              <br />
+              Charlie
+            </h1>
           </div>
           <div className="archive-right">
             {puzzles.length === 0 ? (

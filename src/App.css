@@ -782,6 +782,13 @@ a {
   padding-top: 70px;
 }
 
+.archive-logo-inline {
+  height: 40px;
+  width: auto;
+  vertical-align: middle;
+  margin: 0 0.5em;
+}
+
 .puzzle-list {
   list-style: square;
   padding-left: 20px;
