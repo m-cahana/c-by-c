@@ -549,6 +549,28 @@ function CrosswordGrid({ puzzle }) {
     [rows, cols, puzzle, cells]
   );
 
+  // Move function for backspace - doesn't skip over filled cells
+  const moveForBackspace = React.useCallback(
+    (pos, direction, delta) => {
+      let { r, c } = pos;
+      function isBlockAt(rr, cc) {
+        const cell = puzzle.grid[rr]?.[cc];
+        return typeof cell === "string" ? cell === "." : false;
+      }
+      for (let step = 0; step < rows * cols; step += 1) {
+        if (direction === "across") {
+          c += delta;
+        } else {
+          r += delta;
+        }
+        if (r < 0 || c < 0 || r >= rows || c >= cols) break;
+        if (!isBlockAt(r, c)) return { r, c }; // Only skip blocks, not filled cells
+      }
+      return pos;
+    },
+    [rows, cols, puzzle]
+  );
+
   function handleKeyDown(e, r, c) {
     const key = e.key;
     if (key.startsWith("Arrow")) {
@@ -622,7 +644,7 @@ function CrosswordGrid({ puzzle }) {
           next[r][c] = "";
           return next;
         }
-        const prevPos = move({ r, c }, dir, -1);
+        const prevPos = moveForBackspace({ r, c }, dir, -1);
         next[prevPos.r][prevPos.c] = "";
         setPos(prevPos);
         const num =
@@ -676,7 +698,7 @@ function CrosswordGrid({ puzzle }) {
         next[r][c] = "";
         return next;
       }
-      const prevPos = move({ r, c }, dir, -1);
+      const prevPos = moveForBackspace({ r, c }, dir, -1);
       next[prevPos.r][prevPos.c] = "";
       setPos(prevPos);
       const num =
@@ -686,7 +708,7 @@ function CrosswordGrid({ puzzle }) {
       if (num) setClueNumber(num);
       return next;
     });
-  }, [pos, dir, numbering, move]);
+  }, [pos, dir, numbering, moveForBackspace]);
 
   const pressArrow = React.useCallback(
     (key) => {
