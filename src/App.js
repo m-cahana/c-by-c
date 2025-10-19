@@ -532,6 +532,9 @@ function CrosswordGrid({ puzzle }) {
         const cell = puzzle.grid[rr]?.[cc];
         return typeof cell === "string" ? cell === "." : false;
       }
+      function hasLetterAt(rr, cc) {
+        return cells[rr]?.[cc] && cells[rr][cc].trim() !== "";
+      }
       for (let step = 0; step < rows * cols; step += 1) {
         if (direction === "across") {
           c += delta;
@@ -539,11 +542,11 @@ function CrosswordGrid({ puzzle }) {
           r += delta;
         }
         if (r < 0 || c < 0 || r >= rows || c >= cols) break;
-        if (!isBlockAt(r, c)) return { r, c };
+        if (!isBlockAt(r, c) && !hasLetterAt(r, c)) return { r, c };
       }
       return pos;
     },
-    [rows, cols, puzzle]
+    [rows, cols, puzzle, cells]
   );
 
   function handleKeyDown(e, r, c) {
