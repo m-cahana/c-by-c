@@ -1480,7 +1480,7 @@ function Archive() {
               >
                 weekly newsletter
               </a>{" "}
-              to get each puzzle (and solving tips), and chat about the latest
+              to get each puzzle (and solving tips) and chat about the latest
               puzzles with me on{" "}
               <a
                 href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
