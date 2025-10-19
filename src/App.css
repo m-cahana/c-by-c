@@ -5,8 +5,8 @@
   --incorrect-color: #80005b;
   --cell-background-color: #ffffff;
   --grid-background-color: #999;
-  --button-background-color: #ffff86;
-  --button-icon-color: #000940; /* Color for icons inside buttons */
+  --button-background-color: #000940;
+  --button-icon-color: #ffff86; /* Color for icons inside buttons */
   --website-background-color: #1e1b4b; /* Add this for website background */
   --text-color: #ffffff; /* Global text color */
 }
@@ -31,8 +31,8 @@
 }
 
 a {
-  text-decoration-color: var(--button-background-color);
-  color: var(--button-background-color);
+  text-decoration-color: var(--lighter-color);
+  color: var(--lighter-color);
 }
 
 .content-top {
@@ -45,6 +45,7 @@ a {
   text-align: left;
   white-space: pre-line;
   position: relative;
+  color: var(--text-color);
 }
 
 .status {
@@ -134,7 +135,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0;
+  border: 0.5px solid var(--text-color);
   background: var(--button-background-color);
   cursor: pointer;
   display: inline-flex;
@@ -174,7 +175,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0;
+  border: 0.5px solid var(--text-color);
   background: var(--button-background-color);
   color: var(--button-icon-color); /* Uses CSS variable for icon color */
   cursor: pointer;
@@ -188,21 +189,36 @@ a {
 }
 
 .home-btn {
+  width: 24px;
   height: 24px;
-  width: auto;
-  border: 0;
-  background: transparent;
+  border-radius: 50%;
+  border: 0.5px solid var(--text-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   line-height: 1;
+  background: var(--button-background-color);
+  color: var(--button-icon-color);
 }
 
 .home-btn-img {
   height: 30px;
   width: auto;
+}
+
+/* Create home icon using SVG file */
+.home-btn::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--button-icon-color);
+  mask: url("/public/home-icon.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("/public/home-icon.svg") no-repeat center;
+  -webkit-mask-size: contain;
 }
 
 /* Remove the ::before pseudo-element since we'll use an img tag */
@@ -401,14 +417,14 @@ a {
   font-weight: 700;
   font-style: italic;
   margin-top: 0;
-  color: var(--button-background-color);
+  color: var(--lighter-color);
 }
 
 .modal-subtitle {
   font-size: 18px;
   margin-top: 0;
   font-style: italic;
-  color: var(--button-background-color);
+  color: var(--lighter-color);
 }
 
 .modal-text {
@@ -521,7 +537,7 @@ a {
   font-size: 14px;
   margin: 0 0 4px;
   font-style: italic;
-  color: var(--button-background-color);
+  color: var(--lighter-color);
 }
 
 .clue-list {
@@ -546,7 +562,7 @@ a {
 
 .clue.selected {
   background: var(--darker-color);
-  color: var(--button-background-color);
+  color: var(--lighter-color);
 }
 
 .clue.selected:hover {
@@ -810,9 +826,9 @@ a {
 }
 
 .archive-logo-inline {
-  height: 40px;
+  height: 80px;
   width: auto;
-  vertical-align: middle;
+  vertical-align: bottom;
   margin: 0 0.5em;
 }
 
@@ -836,7 +852,7 @@ a {
 
 .puzzle-item:hover .puzzle-link {
   text-decoration: underline;
-  color: var(--button-background-color);
+  color: var(--lighter-color);
 }
 
 @media (max-width: 1200px) {

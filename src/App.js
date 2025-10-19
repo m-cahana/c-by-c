@@ -990,13 +990,7 @@ function CrosswordGrid({ puzzle }) {
               className="home-btn"
               aria-label="Home"
               onClick={() => (window.location.href = "/archive")}
-            >
-              <img
-                className="home-btn-img"
-                src="/logos/crossword_logo_yellow.png"
-                alt="Home"
-              />
-            </button>
+            ></button>
           </div>
           <div className="header-right">
             <div className="timer" aria-label="elapsed time">
@@ -1237,9 +1231,16 @@ function CrosswordGrid({ puzzle }) {
               <p className="modal-text-long">
                 CxC aims to infuse the stuffy world of crossword solving with
                 topical clues from contemporary fashion, pop culture and art.
-                Check out the weekly newsletter to get each puzzle (and solving
-                tips), explore the archive <a href="/archive">here</a>, and
-                share your times on{" "}
+                Check out the{" "}
+                <a
+                  href="https://crosswordsbycharlie.substack.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  weekly newsletter
+                </a>{" "}
+                to get each puzzle (and solving tips), explore the archive{" "}
+                <a href="/archive">here</a>, and share your times on{" "}
                 <a
                   href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
                   target="_blank"
@@ -1435,13 +1436,7 @@ function Archive() {
             <h1 className="title">
               Crosswords
               <br />
-              by{" "}
-              <img
-                className="archive-logo-inline"
-                src="/logos/crossword_logo_yellow.png"
-                alt="Crossword Logo"
-              />
-              <br />
+              by <br />
               Charlie
             </h1>
           </div>
@@ -1471,9 +1466,16 @@ function Archive() {
             <p>
               CxC aims to infuse the stuffy world of crossword solving with
               topical clues from contemporary fashion, pop culture and art.
-              Check out the weekly newsletter to get each puzzle (and solving
-              tips), explore the archive <a href="/archive">here</a>, and share
-              your times on{" "}
+              Check out the{" "}
+              <a
+                href="https://crosswordsbycharlie.substack.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                weekly newsletter
+              </a>{" "}
+              to get each puzzle (and solving tips), explore the archive{" "}
+              <a href="/archive">here</a>, and share your times on{" "}
               <a
                 href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
                 target="_blank"
