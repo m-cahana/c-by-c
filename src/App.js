@@ -1447,7 +1447,7 @@ function Archive() {
           </div>
 
           <div className="archive-right">
-            <p>
+            <p className="archive-text">
               Crosswords by Charlie aims to infuse the stuffy world of crossword
               solving with topical clues from contemporary fashion, pop culture
               and art. Check out the{" "}
@@ -1470,8 +1470,7 @@ function Archive() {
               </a>
               .
             </p>
-            <br />
-            <p>
+            <p className="archive-credits">
               Web design by{" "}
               <a
                 href="https://michaelcahana.com/"

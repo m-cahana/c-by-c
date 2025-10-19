@@ -819,13 +819,16 @@ a {
   grid-column: 2;
 }
 
-.archive-right p {
+.archive-text {
   font-size: 16px;
-  font-style: italic;
   line-height: 1.6;
   color: var(--text-color);
   margin: 0;
   text-align: left;
+}
+
+.archive-credits {
+  font-style: italic;
 }
 
 .archive-logo-inline {
