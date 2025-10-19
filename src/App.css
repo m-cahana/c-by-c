@@ -10,6 +10,8 @@
   --website-background-color: #1e1b4b; /* Add this for website background */
   --text-color: #ffffff; /* Global text color */
   --border-color: #61bafe;
+  --baby-blue-color: #61bafe;
+  --black-color: #000000;
 }
 
 .App {
@@ -137,7 +139,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--border-color);
+  border: 0;
   background: var(--button-background-color);
   cursor: pointer;
   display: inline-flex;
@@ -275,7 +277,7 @@ a {
 .dotmenu-view {
   display: grid;
   padding: 6px;
-  background: #61bafe;
+  background: var(--baby-blue-color);
 }
 
 .dotmenu-item {
@@ -469,7 +471,7 @@ a {
 }
 
 .cell.current {
-  background: #61bafe; /* focused cell */
+  background: var(--baby-blue-color); /* focused cell */
 }
 
 .cell.incorrect {
@@ -487,7 +489,7 @@ a {
   top: 2px;
   left: 3px;
   font-size: 1.1rem;
-  color: #000000;
+  color: var(--black-color);
 }
 
 .cell-input {
@@ -555,7 +557,7 @@ a {
 }
 
 .clue.selected {
-  background: #61bafe;
+  background: var(--baby-blue-color);
   color: black;
 }
 
@@ -612,8 +614,8 @@ a {
     align-items: center;
     margin-top: 8px;
     padding: 10px 12px;
-    background: #61bafe;
-    color: #000000;
+    background: var(--baby-blue-color);
+    color: var(--black-color);
     font-size: 16px;
     position: relative;
   }
@@ -625,7 +627,7 @@ a {
   .clue-nav-arrow {
     background: none;
     border: none;
-    color: #000000;
+    color: var(--black-color);
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
@@ -658,7 +660,7 @@ a {
     height: 35svh;
     height: 35dvh;
     padding: 14px 8px;
-    background: #000000;
+    background: var(--black-color);
     color: #fff;
     user-select: none;
     box-sizing: border-box;
@@ -849,7 +851,7 @@ a {
 .puzzle-list {
   list-style: square;
   padding-left: 20px;
-  padding-top: 20px;
+  padding-top: 0px;
   text-align: left;
 }
 
