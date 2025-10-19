@@ -9,6 +9,7 @@
   --button-icon-color: #ffff86; /* Color for icons inside buttons */
   --website-background-color: #1e1b4b; /* Add this for website background */
   --text-color: #ffffff; /* Global text color */
+  --border-color: #61bafe;
 }
 
 .App {
@@ -136,7 +137,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--text-color);
+  border: 0.5px solid var(--border-color);
   background: var(--darker-color);
   cursor: pointer;
   display: inline-flex;
@@ -176,7 +177,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--text-color);
+  border: 0.5px solid var(--border-color);
   background: var(--darker-color);
   color: var(--button-icon-color); /* Uses CSS variable for icon color */
   cursor: pointer;
@@ -193,7 +194,7 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--text-color);
+  border: 0.5px solid var(--border-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
