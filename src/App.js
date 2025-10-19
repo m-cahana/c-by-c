@@ -1240,7 +1240,8 @@ function CrosswordGrid({ puzzle }) {
                   weekly newsletter
                 </a>{" "}
                 to get each puzzle (and solving tips), explore the archive{" "}
-                <a href="/archive">here</a>, and share your times on{" "}
+                <a href="/archive">here</a>, and chat about the latest puzzles
+                with me on{" "}
                 <a
                   href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
                   target="_blank"
@@ -1475,7 +1476,8 @@ function Archive() {
                 weekly newsletter
               </a>{" "}
               to get each puzzle (and solving tips), explore the archive{" "}
-              <a href="/archive">here</a>, and share your times on{" "}
+              <a href="/archive">here</a>, and chat about the latest puzzles
+              with me on{" "}
               <a
                 href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
                 target="_blank"

@@ -5,8 +5,8 @@
   --incorrect-color: #80005b;
   --cell-background-color: #ffffff;
   --grid-background-color: #999;
-  --button-background-color: #000940;
-  --button-icon-color: #ffff86; /* Color for icons inside buttons */
+  --button-background-color: #61bafe;
+  --button-icon-color: #000940; /* Color for icons inside buttons */
   --website-background-color: #1e1b4b; /* Add this for website background */
   --text-color: #ffffff; /* Global text color */
   --border-color: #61bafe;
@@ -138,7 +138,7 @@ a {
   height: 24px;
   border-radius: 50%;
   border: 0.5px solid var(--border-color);
-  background: var(--darker-color);
+  background: var(--button-background-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -177,8 +177,8 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--border-color);
-  background: var(--darker-color);
+  border: 0;
+  background: var(--button-background-color);
   color: var(--button-icon-color); /* Uses CSS variable for icon color */
   cursor: pointer;
   display: inline-flex;
@@ -194,14 +194,14 @@ a {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 0.5px solid var(--border-color);
+  border: 0;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   line-height: 1;
-  background: var(--darker-color);
+  background: var(--button-background-color);
   color: var(--button-icon-color);
 }
 
@@ -230,7 +230,7 @@ a {
   height: 18px;
   border-radius: 50%;
   border: 0;
-  background: var(--button-background-color);
+  background: var(--lighter-color);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -266,7 +266,6 @@ a {
   margin-top: 8px;
   background: #fff;
   color: var(--text-color);
-  border: 1px solid #e2e8f0;
   border-radius: 2px;
   min-width: 180px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -276,6 +275,7 @@ a {
 .dotmenu-view {
   display: grid;
   padding: 6px;
+  background: #61bafe;
 }
 
 .dotmenu-item {
@@ -285,19 +285,19 @@ a {
   padding: 8px 10px;
   background: none;
   border: 0;
-  border-radius: 6px;
+  border-radius: 2px;
   cursor: pointer;
   text-align: left;
   font-size: 14px;
 }
 .dotmenu-item:hover {
-  background: #f8fafc;
+  background: var(--lighter-color);
 }
 .dotmenu-danger {
   color: var(--incorrect-color);
 }
 .dotmenu-caret {
-  color: var(--lighter-color);
+  color: black;
 }
 .dotmenu-back {
   background: none;
@@ -469,7 +469,7 @@ a {
 }
 
 .cell.current {
-  background: var(--darker-color); /* focused cell */
+  background: #61bafe; /* focused cell */
 }
 
 .cell.incorrect {
@@ -488,14 +488,6 @@ a {
   left: 3px;
   font-size: 1.1rem;
   color: #000000;
-}
-
-.cell.current .cell-number {
-  color: #ffffff;
-}
-
-.cell.current .cell-input {
-  color: #ffffff;
 }
 
 .cell-input {
@@ -563,8 +555,8 @@ a {
 }
 
 .clue.selected {
-  background: var(--darker-color);
-  color: var(--lighter-color);
+  background: #61bafe;
+  color: black;
 }
 
 .clue.selected:hover {
@@ -620,8 +612,8 @@ a {
     align-items: center;
     margin-top: 8px;
     padding: 10px 12px;
-    background: var(--darker-color);
-    color: var(--lighter-color);
+    background: #61bafe;
+    color: #000000;
     font-size: 16px;
     position: relative;
   }
@@ -633,7 +625,7 @@ a {
   .clue-nav-arrow {
     background: none;
     border: none;
-    color: var(--lighter-color);
+    color: #000000;
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
@@ -716,7 +708,7 @@ a {
     justify-content: center;
   }
   .mobile-key--action {
-    background: var(--darker-color);
+    background: var(--block-color);
   }
   .mobile-key--wide {
     flex: 1.2 1 0;
