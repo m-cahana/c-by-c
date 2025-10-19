@@ -124,8 +124,14 @@ const LoadingAnimation = ({
           x-webkit-airplay="allow"
           controls={false}
         >
-          <source src="/logos/faster_crossword_safari.mp4" type="video/mp4" />
-          <source src="/logos/faster_crossword.mp4" type="video/mp4" />
+          <source
+            src="/logos/yellow_blue_crossword_trim.mp4"
+            type="video/mp4"
+          />
+          <source
+            src="/logos/yellow_blue_crossword_trim.mp4"
+            type="video/mp4"
+          />
           Your browser does not support the video tag.
         </video>
       )}
