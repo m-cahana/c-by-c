@@ -620,7 +620,7 @@ a {
     margin-top: 8px;
     padding: 10px 12px;
     background: var(--darker-color);
-    color: var(--button-background-color);
+    color: var(--lighter-color);
     font-size: 16px;
     position: relative;
   }
@@ -632,7 +632,7 @@ a {
   .clue-nav-arrow {
     background: none;
     border: none;
-    color: var(--button-background-color);
+    color: var(--lighter-color);
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
