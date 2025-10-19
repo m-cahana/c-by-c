@@ -41,11 +41,12 @@ a {
 
 .title {
   font-size: 40px;
+  font-style: italic;
   margin: 0;
   text-align: left;
   white-space: pre-line;
   position: relative;
-  color: var(--text-color);
+  color: var(--lighter-color);
 }
 
 .status {
