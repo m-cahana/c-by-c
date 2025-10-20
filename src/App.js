@@ -1492,7 +1492,7 @@ function Archive() {
               .
             </p>
             <p className="archive-credits">
-              Web design by{" "}
+              Web design and development by{" "}
               <a
                 href="https://michaelcahana.com/"
                 target="_blank"
