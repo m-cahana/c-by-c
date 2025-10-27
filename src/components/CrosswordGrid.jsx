@@ -33,17 +33,21 @@ export default function CrosswordGrid({ puzzle }) {
     return puzzle.grid.map((row) => row.map((ch) => false));
   });
 
-  // Track whether any reveal action has been used for this puzzle
-  const [usedReveal, setUsedReveal] = React.useState(() => {
+  // Track whether any check or reveal action has been used for this puzzle
+  const [usedCheckOrReveal, setUsedCheckOrReveal] = React.useState(() => {
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) {
         const saved = JSON.parse(raw);
-        return Boolean(saved?.usedReveal);
+        return Boolean(saved?.usedCheckOrReveal);
       }
     } catch {}
     return false;
   });
+
+  // Confirmation modal state
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
+  const [confirmationAction, setConfirmationAction] = React.useState(null);
 
   // Timer persistence per puzzle
   const timerKey = React.useMemo(
@@ -304,10 +308,10 @@ export default function CrosswordGrid({ puzzle }) {
 
   React.useEffect(() => {
     try {
-      const data = JSON.stringify({ cells, incorrect, usedReveal });
+      const data = JSON.stringify({ cells, incorrect, usedCheckOrReveal });
       localStorage.setItem(storageKey, data);
     } catch {}
-  }, [cells, incorrect, usedReveal, storageKey]);
+  }, [cells, incorrect, usedCheckOrReveal, storageKey]);
 
   function focusCell(next) {
     setPos(next);
@@ -884,10 +888,12 @@ export default function CrosswordGrid({ puzzle }) {
 
   function checkSquare() {
     checkCells([{ r: pos.r, c: pos.c }]);
+    setUsedCheckOrReveal(true);
   }
 
   function checkWord() {
     checkCells(activePositions);
+    setUsedCheckOrReveal(true);
   }
 
   function checkPuzzle() {
@@ -898,16 +904,17 @@ export default function CrosswordGrid({ puzzle }) {
       }
     }
     checkCells(all);
+    setUsedCheckOrReveal(true);
   }
 
   function revealSquare() {
     revealCells([{ r: pos.r, c: pos.c }]);
-    setUsedReveal(true);
+    setUsedCheckOrReveal(true);
   }
 
   function revealWord() {
     revealCells(activePositions);
-    setUsedReveal(true);
+    setUsedCheckOrReveal(true);
   }
 
   function revealPuzzle() {
@@ -918,7 +925,7 @@ export default function CrosswordGrid({ puzzle }) {
       }
     }
     revealCells(all);
-    setUsedReveal(true);
+    setUsedCheckOrReveal(true);
     // After reveal-all, consider puzzle complete
     setTimeout(() => {
       setCompleted(true);
@@ -932,7 +939,7 @@ export default function CrosswordGrid({ puzzle }) {
       puzzle.grid.map((row) => row.map((ch) => (ch === "." ? null : "")))
     );
     setIncorrect(puzzle.grid.map((row) => row.map(() => false)));
-    setUsedReveal(false);
+    setUsedCheckOrReveal(false);
     try {
       localStorage.removeItem(storageKey);
     } catch {}
@@ -945,6 +952,29 @@ export default function CrosswordGrid({ puzzle }) {
     setTimerRunning(true);
     setCompleted(false);
     setShowCongrats(false);
+  }
+
+  // Confirmation modal functions
+  function showConfirmationModal(action) {
+    if (usedCheckOrReveal) {
+      action();
+      return;
+    }
+    setConfirmationAction(() => action);
+    setShowConfirmation(true);
+  }
+
+  function handleConfirmationYes() {
+    if (confirmationAction) {
+      confirmationAction();
+    }
+    setShowConfirmation(false);
+    setConfirmationAction(null);
+  }
+
+  function handleConfirmationNo() {
+    setShowConfirmation(false);
+    setConfirmationAction(null);
   }
 
   // Identify puzzle for leaderboard (best available key: title)
@@ -988,7 +1018,7 @@ export default function CrosswordGrid({ puzzle }) {
 
   async function submitLeaderboard() {
     if (!isSupabaseConfigured() || !supabase) return;
-    if (usedReveal) return;
+    if (usedCheckOrReveal) return;
     const name = (playerName || "").trim().slice(0, 24);
     if (!name) return setSubmitError("Enter a name");
     setSubmitLoading(true);
@@ -1004,7 +1034,7 @@ export default function CrosswordGrid({ puzzle }) {
         name,
         elapsed_ms: elapsedMs,
         client_id: clientId,
-        used_reveal: usedReveal,
+        used_check_or_reveal: usedCheckOrReveal,
       });
       if (error) throw error;
       setSubmitSuccess(true);
@@ -1113,8 +1143,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          checkSquare();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            checkSquare();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Square
@@ -1122,8 +1154,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          checkWord();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            checkWord();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Word
@@ -1131,8 +1165,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          checkPuzzle();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            checkPuzzle();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Puzzle
@@ -1150,8 +1186,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          revealSquare();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            revealSquare();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Letter
@@ -1159,8 +1197,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          revealWord();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            revealWord();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Word
@@ -1168,8 +1208,10 @@ export default function CrosswordGrid({ puzzle }) {
                       <button
                         className="dotmenu-item"
                         onClick={() => {
-                          revealPuzzle();
-                          setMenuOpen(false);
+                          showConfirmationModal(() => {
+                            revealPuzzle();
+                            setMenuOpen(false);
+                          });
                         }}
                       >
                         Puzzle
@@ -1289,7 +1331,7 @@ export default function CrosswordGrid({ puzzle }) {
               <p className="modal-text">
                 You've completed the puzzle in {formatElapsed(elapsedMs)}.
               </p>
-              {!usedReveal ? (
+              {!usedCheckOrReveal ? (
                 <div>
                   <div
                     style={{ display: "flex", gap: 8, alignItems: "center" }}
@@ -1420,6 +1462,31 @@ export default function CrosswordGrid({ puzzle }) {
                   ))}
                 </ul>
               )}
+            </div>
+          </div>
+        )}
+        {showConfirmation && (
+          <div className="modal-backdrop" onClick={handleConfirmationNo}>
+            <div className="modal" role="dialog" aria-modal="true">
+              <h3 className="modal-title">Are you sure?</h3>
+              <p className="modal-text">
+                While checking may be tempting, it will prevent you from
+                submitting to the leaderboard.
+              </p>
+              <div className="modal-buttons">
+                <button
+                  className="modal-btn modal-btn-primary"
+                  onClick={handleConfirmationYes}
+                >
+                  Yes
+                </button>
+                <button
+                  className="modal-btn modal-btn-secondary"
+                  onClick={handleConfirmationNo}
+                >
+                  No
+                </button>
+              </div>
             </div>
           </div>
         )}

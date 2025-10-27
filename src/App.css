@@ -477,6 +477,41 @@ a {
   right: 12px;
 }
 
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 2px;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+.modal-btn-primary {
+  background: var(--lighter-color);
+  color: var(--darker-color);
+}
+
+.modal-btn-primary:hover {
+  font-weight: 700;
+}
+
+.modal-btn-secondary:hover {
+  font-weight: 700;
+}
+
+.modal-btn-secondary {
+  background: var(--baby-blue-color);
+  color: var(--darker-color);
+}
+
 .grid {
   display: grid;
   gap: 2px;
