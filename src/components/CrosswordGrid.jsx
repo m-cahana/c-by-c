@@ -1322,25 +1322,17 @@ export default function CrosswordGrid({ puzzle }) {
                   )}
                   {submitSuccess && (
                     <div style={{ marginTop: 8 }}>
-                      <button
-                        className="info-btn"
-                        aria-label="View leaderboard"
-                        title="View leaderboard"
-                        onClick={() => {
-                          setShowCongrats(false);
-                          setShowLeaderboard(true);
-                        }}
+                      <span
+                        className="view-leaderboard"
+                        onClick={() => setShowLeaderboard(true)}
                       >
-                        i
-                      </button>
-                      <span style={{ marginLeft: 8 }}>View leaderboard</span>
+                        View leaderboard
+                      </span>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="modal-text" style={{ marginTop: 12 }}>
-                  Reveals used — time not eligible for leaderboard.
-                </p>
+                <></>
               )}
             </div>
           </div>
