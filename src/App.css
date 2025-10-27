@@ -225,6 +225,35 @@ a {
   -webkit-mask-size: contain;
 }
 
+.leaderboard-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  background: var(--button-background-color);
+  color: var(--button-icon-color);
+  position: relative;
+}
+
+/* Create podium icon using SVG file */
+.leaderboard-btn::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: var(--button-icon-color);
+  mask: url("/public/leaderboard.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("/public/leaderboard.svg") no-repeat center;
+  -webkit-mask-size: contain;
+}
+
 /* Remove the ::before pseudo-element since we'll use an img tag */
 
 .close-btn {
@@ -361,18 +390,18 @@ a {
 .admin-input {
   font-size: 18px;
   padding: 8px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 2px;
   min-width: 260px;
+  background: var(--text-color);
 }
 
 .admin-button {
   font-size: 18px;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: 2px;
   border: 0;
-  background: #0a2e28;
-  color: #fff;
+  background: var(--lighter-color);
+  color: var(--button-icon-color);
   cursor: pointer;
 }
 .admin-button:hover {
@@ -542,6 +571,80 @@ a {
   margin: 0;
   display: grid;
   gap: 4px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.leaderboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0px;
+  border-radius: 0px;
+  cursor: pointer;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.leaderboard-number {
+  font-weight: 600;
+  margin-right: 6px;
+  min-width: 20px;
+}
+
+.leaderboard-name {
+  margin-left: 0px;
+  flex: 1;
+  text-align: left;
+}
+
+.leaderboard-time {
+  margin-left: 12px;
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  text-align: right;
+}
+
+.leaderboard-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 6px 0px;
+  color: var(--lighter-color);
+  border-radius: 2px;
+}
+
+.leaderboard-header-left {
+  flex: 1;
+  text-align: left;
+  margin-left: 20px; /* Align with leaderboard-name (20px number + 8px margin) */
+}
+
+.leaderboard-header-right {
+  margin-left: 12px;
+  min-width: 60px;
+  text-align: right;
+}
+
+.view-leaderboard {
+  font-size: 16px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--lighter-color);
+  cursor: pointer;
+}
+
+.view-leaderboard:hover {
+  font-weight: 700;
 }
 
 .clue {
