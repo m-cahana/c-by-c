@@ -70,8 +70,30 @@ function useLatestPuzzle(fallbackUrl) {
         let decoded = null;
 
         // Check if we're loading a specific puzzle from URL
+        const isTitlePrefix = fallbackUrl.startsWith("/titleprefix/");
         const isSpecificPuzzle = fallbackUrl.startsWith("/puzzles/");
-        if (isSpecificPuzzle) {
+        if (isTitlePrefix) {
+          const targetPrefix = fallbackUrl.replace("/titleprefix/", "");
+          try {
+            const puzzleList = await fetchAllSupabasePuzzles();
+            for (const puzzleFile of puzzleList) {
+              try {
+                const { arrayBuffer } = await fetchSpecificSupabasePuzzle(
+                  puzzleFile.name
+                );
+                const decodedCandidate = decode(arrayBuffer);
+                const candidateTitle =
+                  decodedCandidate.meta?.title ||
+                  puzzleFile.name.replace(".puz", "");
+                const candidatePrefix = candidateTitle.split(":")[0].trim();
+                if (candidatePrefix === targetPrefix) {
+                  decoded = decodedCandidate;
+                  break;
+                }
+              } catch (e) {}
+            }
+          } catch (e) {}
+        } else if (isSpecificPuzzle) {
           const puzzleName = fallbackUrl.replace("/puzzles/", "");
           try {
             const specific = await fetchSpecificSupabasePuzzle(puzzleName);
@@ -91,7 +113,7 @@ function useLatestPuzzle(fallbackUrl) {
           } catch (supaErr) {}
         }
 
-        if (!decoded) {
+        if (!decoded && !isTitlePrefix && !isSpecificPuzzle) {
           const res = await fetch(fallbackUrl);
           if (!res.ok) throw new Error(`Failed to load puzzle: ${res.status}`);
           const arrayBuffer = await res.arrayBuffer();
@@ -119,8 +141,11 @@ function useLatestPuzzle(fallbackUrl) {
 
 function MainPage() {
   const { puzzleName } = useParams();
-  const fallbackUrl = puzzleName
-    ? `/puzzles/${decodeURIComponent(puzzleName)}`
+  const titlePrefix = puzzleName
+    ? decodeURIComponent(puzzleName).replace(/_/g, " ")
+    : null;
+  const fallbackUrl = titlePrefix
+    ? `/titleprefix/${titlePrefix}`
     : "/default_puzzle.puz";
   const { puzzle, error, loading } = useLatestPuzzle(fallbackUrl);
 
@@ -330,7 +355,10 @@ function Archive() {
                       to={
                         index === 0
                           ? "/"
-                          : `/puzzle/${encodeURIComponent(puzzle.name)}`
+                          : `/puzzle/${puzzle.title
+                              .split(":")[0]
+                              .trim()
+                              .replace(/\s+/g, "_")}`
                       }
                       className="puzzle-link"
                     >

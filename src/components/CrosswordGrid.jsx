@@ -998,6 +998,8 @@ export default function CrosswordGrid({ puzzle }) {
     () => String(puzzle.meta?.title || "puzzle"),
     [puzzle]
   );
+
+  console.log("puzzleKey", puzzleKey);
   const puzzleTitle = puzzle.meta?.title || "";
 
   // Player identity (per-device) and name persistence
