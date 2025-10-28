@@ -1050,7 +1050,7 @@ export default function CrosswordGrid({ puzzle }) {
         name,
         elapsed_ms: elapsedMs,
         client_id: clientId,
-        used_check_or_reveal: usedCheckOrReveal,
+        used_reveal: usedCheckOrReveal,
       });
       if (error) throw error;
       setSubmitSuccess(true);
