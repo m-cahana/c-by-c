@@ -760,6 +760,19 @@ export default function CrosswordGrid({ puzzle }) {
   React.useEffect(() => {
     if (!isSmallScreen) return; // only for mobile to support hardware keyboards
     function onDocKey(e) {
+      // Ignore key handling when typing in any editable field or inside modals
+      const target = e.target;
+      const tag = target && target.tagName ? target.tagName.toLowerCase() : "";
+      const insideModal =
+        (target &&
+          typeof target.closest === "function" &&
+          target.closest(".modal")) ||
+        false;
+      const isEditable =
+        insideModal ||
+        (target &&
+          (target.isContentEditable || tag === "input" || tag === "textarea"));
+      if (isEditable || showCongrats || showLeaderboard || showInfo) return;
       if (
         e.key.startsWith("Arrow") ||
         e.key === "Backspace" ||
@@ -784,6 +797,9 @@ export default function CrosswordGrid({ puzzle }) {
     pressArrow,
     pressEnter,
     typeLetter,
+    showCongrats,
+    showLeaderboard,
+    showInfo,
   ]);
 
   function handleCellClick(r, c) {
