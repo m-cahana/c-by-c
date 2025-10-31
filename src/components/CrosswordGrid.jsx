@@ -48,6 +48,8 @@ export default function CrosswordGrid({ puzzle }) {
   // Confirmation modal state
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const [confirmationAction, setConfirmationAction] = React.useState(null);
+  const [confirmationActionType, setConfirmationActionType] =
+    React.useState("check"); // "check" or "reveal"
 
   // Timer persistence per puzzle
   const timerKey = React.useMemo(
@@ -971,12 +973,13 @@ export default function CrosswordGrid({ puzzle }) {
   }
 
   // Confirmation modal functions
-  function showConfirmationModal(action) {
+  function showConfirmationModal(action, actionType = "check") {
     if (usedCheckOrReveal) {
       action();
       return;
     }
     setConfirmationAction(() => action);
+    setConfirmationActionType(actionType);
     setShowConfirmation(true);
   }
 
@@ -986,11 +989,13 @@ export default function CrosswordGrid({ puzzle }) {
     }
     setShowConfirmation(false);
     setConfirmationAction(null);
+    setConfirmationActionType("check");
   }
 
   function handleConfirmationNo() {
     setShowConfirmation(false);
     setConfirmationAction(null);
+    setConfirmationActionType("check");
   }
 
   // Identify puzzle for leaderboard (best available key: title)
@@ -1164,7 +1169,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             checkSquare();
                             setMenuOpen(false);
-                          });
+                          }, "check");
                         }}
                       >
                         Square
@@ -1175,7 +1180,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             checkWord();
                             setMenuOpen(false);
-                          });
+                          }, "check");
                         }}
                       >
                         Word
@@ -1186,7 +1191,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             checkPuzzle();
                             setMenuOpen(false);
-                          });
+                          }, "check");
                         }}
                       >
                         Puzzle
@@ -1207,7 +1212,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             revealSquare();
                             setMenuOpen(false);
-                          });
+                          }, "reveal");
                         }}
                       >
                         Letter
@@ -1218,7 +1223,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             revealWord();
                             setMenuOpen(false);
-                          });
+                          }, "reveal");
                         }}
                       >
                         Word
@@ -1229,7 +1234,7 @@ export default function CrosswordGrid({ puzzle }) {
                           showConfirmationModal(() => {
                             revealPuzzle();
                             setMenuOpen(false);
-                          });
+                          }, "reveal");
                         }}
                       >
                         Puzzle
@@ -1488,8 +1493,10 @@ export default function CrosswordGrid({ puzzle }) {
             <div className="modal" role="dialog" aria-modal="true">
               <h3 className="modal-title">Are you sure?</h3>
               <p className="modal-text">
-                While checking may be tempting, it will prevent you from
-                submitting to the leaderboard.
+                While{" "}
+                {confirmationActionType === "reveal" ? "revealing" : "checking"}{" "}
+                may be tempting, it will prevent you from submitting to the
+                leaderboard.
               </p>
               <div className="modal-buttons">
                 <button
