@@ -47,7 +47,6 @@ const LoadingAnimation = ({
         clearTimeout(fallbackTimeoutRef.current);
         fallbackTimeoutRef.current = null;
       }
-      console.log("Video can play, using source:", video.currentSrc);
     };
 
     // If data is already loaded and we're not forcing video play, skip the animation

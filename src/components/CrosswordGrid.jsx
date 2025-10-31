@@ -1004,7 +1004,6 @@ export default function CrosswordGrid({ puzzle }) {
     [puzzle]
   );
 
-  console.log("puzzleKey", puzzleKey);
   const puzzleTitle = puzzle.meta?.title || "";
 
   // Player identity (per-device) and name persistence
