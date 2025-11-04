@@ -123,6 +123,8 @@ export default function CrosswordGrid({ puzzle }) {
   const [showCongrats, setShowCongrats] = React.useState(false);
   const [showInfo, setShowInfo] = React.useState(false);
   const [showLeaderboard, setShowLeaderboard] = React.useState(false);
+  const [showSoClose, setShowSoClose] = React.useState(false);
+  const soCloseShownRef = React.useRef(false);
 
   function isSolved() {
     for (let rr = 0; rr < rows; rr += 1) {
@@ -139,14 +141,41 @@ export default function CrosswordGrid({ puzzle }) {
     return true;
   }
 
+  function isFullyFilled() {
+    for (let rr = 0; rr < rows; rr += 1) {
+      for (let cc = 0; cc < cols; cc += 1) {
+        if (puzzle.grid[rr][cc] === ".") continue;
+        const val = cells[rr][cc] || "";
+        if (val.trim() === "") return false;
+      }
+    }
+    return true;
+  }
+
   React.useEffect(() => {
     if (!completed && isSolved()) {
       setCompleted(true);
       setTimerRunning(false);
       setShowCongrats(true);
+      soCloseShownRef.current = false; // Reset for next puzzle
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cells]);
+
+  // Check if puzzle is fully filled but incorrect
+  React.useEffect(() => {
+    if (!completed && !showCongrats && isFullyFilled() && !isSolved()) {
+      if (!soCloseShownRef.current) {
+        setShowSoClose(true);
+        soCloseShownRef.current = true;
+      }
+    }
+    // Reset the ref when cells become incomplete again
+    if (!isFullyFilled()) {
+      soCloseShownRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cells, completed, showCongrats]);
 
   // Pause timer when page is hidden; exclude hidden time from elapsed
   const hiddenStartRef = React.useRef(null);
@@ -774,7 +803,14 @@ export default function CrosswordGrid({ puzzle }) {
         insideModal ||
         (target &&
           (target.isContentEditable || tag === "input" || tag === "textarea"));
-      if (isEditable || showCongrats || showLeaderboard || showInfo) return;
+      if (
+        isEditable ||
+        showCongrats ||
+        showLeaderboard ||
+        showInfo ||
+        showSoClose
+      )
+        return;
       if (
         e.key.startsWith("Arrow") ||
         e.key === "Backspace" ||
@@ -802,6 +838,7 @@ export default function CrosswordGrid({ puzzle }) {
     showCongrats,
     showLeaderboard,
     showInfo,
+    showSoClose,
   ]);
 
   function handleCellClick(r, c) {
@@ -970,6 +1007,8 @@ export default function CrosswordGrid({ puzzle }) {
     setTimerRunning(true);
     setCompleted(false);
     setShowCongrats(false);
+    setShowSoClose(false);
+    soCloseShownRef.current = false;
   }
 
   // Confirmation modal functions
@@ -1511,6 +1550,26 @@ export default function CrosswordGrid({ puzzle }) {
                   No
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+        {showSoClose && (
+          <div className="modal-backdrop" onClick={() => setShowSoClose(false)}>
+            <div
+              className="modal"
+              role="dialog"
+              aria-modal="true"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="close-btn modal-close"
+                aria-label="Close"
+                onClick={() => setShowSoClose(false)}
+              />
+              <h3 className="modal-title">Almost!</h3>
+              <p className="modal-text">
+                You've got at least one letter wrong in your puzzle.
+              </p>
             </div>
           </div>
         )}
