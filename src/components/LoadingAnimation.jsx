@@ -124,11 +124,11 @@ const LoadingAnimation = ({
           controls={false}
         >
           <source
-            src="/logos/yellow_blue_crossword_trim.mp4"
+            src="/logos/yellow_blue_crossword_super_trim.mp4"
             type="video/mp4"
           />
           <source
-            src="/logos/yellow_blue_crossword_trim.mp4"
+            src="/logos/yellow_blue_crossword_super_trim.mp4"
             type="video/mp4"
           />
           Your browser does not support the video tag.
