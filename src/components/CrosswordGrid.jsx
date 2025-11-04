@@ -1293,7 +1293,7 @@ export default function CrosswordGrid({ puzzle }) {
           </div>
         </div>
         <div
-          className="grid"
+          className={`grid ${rows > 10 || cols > 10 ? "large-grid" : ""}`}
           style={{
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridTemplateRows: `repeat(${rows}, 1fr)`,
