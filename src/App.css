@@ -560,6 +560,9 @@ a {
 .grid.large-grid .cell-number {
   font-size: 0.9rem;
 }
+.grid.large-grid .cell-input {
+  font-size: clamp(20px, 2.4vw, 28px);
+}
 
 .cell-input {
   width: 100%;
