@@ -1695,6 +1695,20 @@ function computeNumbering(puzzle) {
 }
 
 function ClueList({ title, entries, currentNumber, onSelect }) {
+  const clueRefs = React.useRef({});
+
+  // Scroll selected clue into view when currentNumber changes
+  React.useEffect(() => {
+    if (currentNumber !== null && clueRefs.current[currentNumber]) {
+      const clueElement = clueRefs.current[currentNumber];
+      clueElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+  }, [currentNumber]);
+
   return (
     <div className="clue-section">
       <h2 className="clue-title">{title}</h2>
@@ -1702,6 +1716,9 @@ function ClueList({ title, entries, currentNumber, onSelect }) {
         {entries.map((e) => (
           <li
             key={`${title}-${e.number}`}
+            ref={(el) => {
+              clueRefs.current[e.number] = el;
+            }}
             className={e.number === currentNumber ? "clue selected" : "clue"}
             onClick={() => onSelect(e.number)}
           >

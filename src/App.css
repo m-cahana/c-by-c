@@ -564,6 +564,14 @@ a {
   font-size: clamp(20px, 2.4vw, 28px);
 }
 
+.grid.extra-large-grid .cell-number {
+  font-size: 0.8rem;
+}
+
+.grid.extra-large-grid .cell-input {
+  font-size: clamp(16px, 2vw, 24px);
+}
+
 .cell-input {
   width: 100%;
   height: 100%;
