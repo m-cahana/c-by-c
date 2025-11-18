@@ -591,6 +591,7 @@ a {
   display: grid;
   grid-template-columns: 1fr minmax(240px, 320px);
   gap: 16px;
+  align-items: start;
 }
 
 .clues {
@@ -599,6 +600,30 @@ a {
   gap: 12px;
   grid-template-columns: 1fr;
   margin-top: 25px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Firefox scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--black-color) transparent;
+}
+
+/* Custom scrollbar styling for Chrome/Safari/Edge */
+.clues::-webkit-scrollbar {
+  width: 8px;
+}
+
+.clues::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.clues::-webkit-scrollbar-thumb {
+  background-color: var(--black-color);
+  border-radius: 4px;
+}
+
+.clues::-webkit-scrollbar-thumb:hover {
+  background-color: var(--lighter-color);
 }
 
 .clue-title {
@@ -606,6 +631,10 @@ a {
   margin: 0 0 4px;
   font-style: italic;
   color: var(--lighter-color);
+  position: sticky;
+  top: 0;
+  background-color: var(--website-background-color);
+  z-index: 10;
 }
 
 .clue-list {
@@ -920,6 +949,9 @@ a {
     grid-template-columns: 1fr 1fr;
     align-items: start;
     gap: 16px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .crossword {
     margin-left: 0;
