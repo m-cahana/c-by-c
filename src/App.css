@@ -607,7 +607,7 @@ a {
   grid-auto-rows: min-content;
   gap: 12px;
   grid-template-columns: 1fr;
-  margin-top: 25px;
+  margin-top: 4px;
   max-height: calc(100vh - 60px);
   overflow-y: auto;
   overflow-x: hidden;
@@ -958,8 +958,43 @@ a {
     align-items: start;
     gap: 16px;
     max-height: calc(100vh - 60px);
+    overflow: visible; /* Remove scroll from parent on large screens */
+  }
+
+  /* Make each clue section independently scrollable on large screens */
+  .clue-section {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
     overflow-x: hidden;
+    /* Firefox scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--black-color) transparent;
+  }
+
+  .clue-section .clue-list {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Custom scrollbar styling for clue sections on large screens */
+  .clue-section::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .clue-section::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .clue-section::-webkit-scrollbar-thumb {
+    background-color: var(--black-color);
+    border-radius: 4px;
+  }
+
+  .clue-section::-webkit-scrollbar-thumb:hover {
+    background-color: var(--lighter-color);
   }
   .crossword {
     margin-left: 0;
