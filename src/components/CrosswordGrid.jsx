@@ -1167,9 +1167,31 @@ export default function CrosswordGrid({ puzzle }) {
     fetchLB();
   }, [showLeaderboard, puzzleKey]);
 
+  // Sync clue section heights with grid height on large screens
+  const layoutRef = React.useRef(null);
+  const crosswordRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isLargeScreen = window.matchMedia("(min-width: 1200px)").matches;
+    if (!isLargeScreen || !layoutRef.current || !crosswordRef.current) return;
+
+    const updateHeight = () => {
+      const crosswordHeight = crosswordRef.current.offsetHeight;
+      layoutRef.current.style.setProperty(
+        "--grid-height",
+        `${crosswordHeight}px`
+      );
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [puzzle, cells]); // Recalculate when puzzle or cells change (affects grid size)
+
   return (
-    <div className="layout">
-      <div className="crossword">
+    <div className="layout" ref={layoutRef}>
+      <div className="crossword" ref={crosswordRef}>
         <div className="header">
           <div className="header-left">
             <button

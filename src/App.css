@@ -952,21 +952,22 @@ a {
   .layout {
     grid-template-columns: minmax(420px, 1fr) minmax(480px, 1.2fr);
     gap: 20px;
+    align-items: start;
   }
+
   .clues {
     grid-template-columns: 1fr 1fr;
     align-items: start;
     gap: 16px;
-    max-height: calc(100vh - 60px);
     overflow: visible; /* Remove scroll from parent on large screens */
   }
 
-  /* Make each clue section independently scrollable on large screens */
+  /* Make each clue section match the grid height and scroll independently */
   .clue-section {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 100px);
-    max-height: calc(100vh - 100px);
+    /* Match the crossword grid height - will be set dynamically */
+    max-height: var(--grid-height, calc(100vh - 100px));
     overflow-y: auto;
     overflow-x: hidden;
     /* Firefox scrollbar styling */
@@ -975,8 +976,7 @@ a {
   }
 
   .clue-section .clue-list {
-    flex: 1;
-    min-height: 0;
+    flex-shrink: 0;
   }
 
   /* Custom scrollbar styling for clue sections on large screens */
