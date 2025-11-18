@@ -410,6 +410,43 @@ export default function CrosswordGrid({ puzzle }) {
     [numbering, findFirstEmptyCell]
   );
 
+  // Helper function to shift to next incomplete clue
+  const shiftToNextIncompleteClue = React.useCallback(
+    (checkDir, checkClueNumber) => {
+      const currentList =
+        checkDir === "across" ? numbering.across : numbering.down;
+      const currentIndex = currentList.findIndex(
+        (e) => e.number === checkClueNumber
+      );
+
+      // Try to find next incomplete clue in current direction
+      const nextIncompleteClue = findNextIncompleteClue(
+        currentList,
+        currentIndex,
+        1
+      );
+      if (nextIncompleteClue) {
+        setSelectionByNumber(checkDir, nextIncompleteClue.number);
+        return true;
+      } else {
+        // No more incomplete clues in current direction, switch to other direction
+        const otherDir = checkDir === "across" ? "down" : "across";
+        const otherList =
+          otherDir === "across" ? numbering.across : numbering.down;
+        if (otherList.length > 0) {
+          // Find first incomplete clue in other direction
+          const firstIncompleteClue = findNextIncompleteClue(otherList, -1, 1);
+          if (firstIncompleteClue) {
+            setSelectionByNumber(otherDir, firstIncompleteClue.number);
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    [numbering, setSelectionByNumber, findNextIncompleteClue]
+  );
+
   const handleChange = React.useCallback((r, c, value) => {
     setCells((prev) => {
       const next = prev.map((row) => row.slice());
@@ -513,36 +550,17 @@ export default function CrosswordGrid({ puzzle }) {
     }
     if (key === "Enter") {
       e.preventDefault();
-      const currentList = dir === "across" ? numbering.across : numbering.down;
-      const currentIndex = currentList.findIndex(
-        (e) => e.number === clueNumber
-      );
-
-      // Try to find next incomplete clue in current direction
-      const nextIncompleteClue = findNextIncompleteClue(
-        currentList,
-        currentIndex,
-        1
-      );
-      if (nextIncompleteClue) {
-        setSelectionByNumber(dir, nextIncompleteClue.number);
-      } else {
-        // No more incomplete clues in current direction, switch to other direction
-        const otherDir = dir === "across" ? "down" : "across";
-        const otherList =
-          otherDir === "across" ? numbering.across : numbering.down;
-        if (otherList.length > 0) {
-          // Find first incomplete clue in other direction
-          const firstIncompleteClue = findNextIncompleteClue(otherList, -1, 1);
-          if (firstIncompleteClue) {
-            setSelectionByNumber(otherDir, firstIncompleteClue.number);
-          } else {
-            // All clues are complete, stay where we are
-            const currentEntry = currentList[currentIndex];
-            if (currentEntry) {
-              setSelectionByNumber(dir, currentEntry.number);
-            }
-          }
+      const shifted = shiftToNextIncompleteClue(dir, clueNumber);
+      // If no shift happened (all clues complete), stay where we are
+      if (!shifted) {
+        const currentList =
+          dir === "across" ? numbering.across : numbering.down;
+        const currentIndex = currentList.findIndex(
+          (e) => e.number === clueNumber
+        );
+        const currentEntry = currentList[currentIndex];
+        if (currentEntry) {
+          setSelectionByNumber(dir, currentEntry.number);
         }
       }
       return;
@@ -571,6 +589,26 @@ export default function CrosswordGrid({ puzzle }) {
       e.preventDefault();
       const letter = key.toUpperCase();
       handleChange(r, c, letter);
+
+      // Check if the current clue is now complete after typing this letter
+      const currentList = dir === "across" ? numbering.across : numbering.down;
+      const currentEntry = currentList.find((e) => e.number === clueNumber);
+      if (currentEntry) {
+        // Check if clue is complete (all cells filled, including the one we just filled)
+        const isComplete = currentEntry.positions.every(({ r: pr, c: pc }) => {
+          // If this is the cell we just typed in, it's now filled
+          if (pr === r && pc === c) return true;
+          const cell = cells[pr]?.[pc];
+          return cell && cell.trim() !== "";
+        });
+
+        if (isComplete) {
+          // Clue is complete, shift to next incomplete clue
+          shiftToNextIncompleteClue(dir, clueNumber);
+          return;
+        }
+      }
+
       const next = move({ r, c }, dir, 1);
       setPos(next);
       const num =
@@ -589,6 +627,26 @@ export default function CrosswordGrid({ puzzle }) {
       const c = pos.c;
       const ch = letter.slice(-1).toUpperCase();
       handleChange(r, c, ch);
+
+      // Check if the current clue is now complete after typing this letter
+      const currentList = dir === "across" ? numbering.across : numbering.down;
+      const currentEntry = currentList.find((e) => e.number === clueNumber);
+      if (currentEntry) {
+        // Check if clue is complete (all cells filled, including the one we just filled)
+        const isComplete = currentEntry.positions.every(({ r: pr, c: pc }) => {
+          // If this is the cell we just typed in, it's now filled
+          if (pr === r && pc === c) return true;
+          const cell = cells[pr]?.[pc];
+          return cell && cell.trim() !== "";
+        });
+
+        if (isComplete) {
+          // Clue is complete, shift to next incomplete clue
+          shiftToNextIncompleteClue(dir, clueNumber);
+          return;
+        }
+      }
+
       const next = move({ r, c }, dir, 1);
       setPos(next);
       const num =
@@ -597,7 +655,16 @@ export default function CrosswordGrid({ puzzle }) {
           : numbering.downNumAt[next.r][next.c];
       if (num) setClueNumber(num);
     },
-    [pos, dir, numbering, move, handleChange]
+    [
+      pos,
+      dir,
+      clueNumber,
+      numbering,
+      cells,
+      move,
+      handleChange,
+      shiftToNextIncompleteClue,
+    ]
   );
 
   const pressBackspace = React.useCallback(() => {
@@ -667,34 +734,16 @@ export default function CrosswordGrid({ puzzle }) {
   }, [dir, pos, numbering, setSelectionByNumber]);
 
   const pressEnter = React.useCallback(() => {
-    const currentList = dir === "across" ? numbering.across : numbering.down;
-    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
-
-    // Try to find next incomplete clue in current direction
-    const nextIncompleteClue = findNextIncompleteClue(
-      currentList,
-      currentIndex,
-      1
-    );
-    if (nextIncompleteClue) {
-      setSelectionByNumber(dir, nextIncompleteClue.number);
-    } else {
-      // No more incomplete clues in current direction, switch to other direction
-      const otherDir = dir === "across" ? "down" : "across";
-      const otherList =
-        otherDir === "across" ? numbering.across : numbering.down;
-      if (otherList.length > 0) {
-        // Find first incomplete clue in other direction
-        const firstIncompleteClue = findNextIncompleteClue(otherList, -1, 1);
-        if (firstIncompleteClue) {
-          setSelectionByNumber(otherDir, firstIncompleteClue.number);
-        } else {
-          // All clues are complete, stay where we are
-          const currentEntry = currentList[currentIndex];
-          if (currentEntry) {
-            setSelectionByNumber(dir, currentEntry.number);
-          }
-        }
+    const shifted = shiftToNextIncompleteClue(dir, clueNumber);
+    // If no shift happened (all clues complete), stay where we are
+    if (!shifted) {
+      const currentList = dir === "across" ? numbering.across : numbering.down;
+      const currentIndex = currentList.findIndex(
+        (e) => e.number === clueNumber
+      );
+      const currentEntry = currentList[currentIndex];
+      if (currentEntry) {
+        setSelectionByNumber(dir, currentEntry.number);
       }
     }
   }, [
@@ -702,7 +751,7 @@ export default function CrosswordGrid({ puzzle }) {
     clueNumber,
     numbering,
     setSelectionByNumber,
-    findNextIncompleteClue,
+    shiftToNextIncompleteClue,
   ]);
 
   // Navigation functions for mobile clue banner arrows
@@ -750,34 +799,16 @@ export default function CrosswordGrid({ puzzle }) {
   ]);
 
   const goToNextClue = React.useCallback(() => {
-    const currentList = dir === "across" ? numbering.across : numbering.down;
-    const currentIndex = currentList.findIndex((e) => e.number === clueNumber);
-
-    // Try to find next incomplete clue in current direction
-    const nextIncompleteClue = findNextIncompleteClue(
-      currentList,
-      currentIndex,
-      1
-    );
-    if (nextIncompleteClue) {
-      setSelectionByNumber(dir, nextIncompleteClue.number);
-    } else {
-      // No more incomplete clues in current direction, switch to other direction
-      const otherDir = dir === "across" ? "down" : "across";
-      const otherList =
-        otherDir === "across" ? numbering.across : numbering.down;
-      if (otherList.length > 0) {
-        // Find first incomplete clue in other direction
-        const firstIncompleteClue = findNextIncompleteClue(otherList, -1, 1);
-        if (firstIncompleteClue) {
-          setSelectionByNumber(otherDir, firstIncompleteClue.number);
-        } else {
-          // All clues are complete, stay where we are
-          const currentEntry = currentList[currentIndex];
-          if (currentEntry) {
-            setSelectionByNumber(dir, currentEntry.number);
-          }
-        }
+    const shifted = shiftToNextIncompleteClue(dir, clueNumber);
+    // If no shift happened (all clues complete), stay where we are
+    if (!shifted) {
+      const currentList = dir === "across" ? numbering.across : numbering.down;
+      const currentIndex = currentList.findIndex(
+        (e) => e.number === clueNumber
+      );
+      const currentEntry = currentList[currentIndex];
+      if (currentEntry) {
+        setSelectionByNumber(dir, currentEntry.number);
       }
     }
   }, [
@@ -785,7 +816,7 @@ export default function CrosswordGrid({ puzzle }) {
     clueNumber,
     numbering,
     setSelectionByNumber,
-    findNextIncompleteClue,
+    shiftToNextIncompleteClue,
   ]);
 
   React.useEffect(() => {
