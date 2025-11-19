@@ -552,24 +552,13 @@ a {
   position: absolute;
   top: 2px;
   left: 3px;
-  font-size: 1.1rem;
+  font-size: clamp(12px, 1.5vw, 16px);
   color: var(--black-color);
 }
 
 /* Smaller font size for large grids (>10x10) */
 .grid.large-grid .cell-number {
-  font-size: 0.9rem;
-}
-.grid.large-grid .cell-input {
-  font-size: clamp(20px, 2.4vw, 28px);
-}
-
-.grid.extra-large-grid .cell-number {
-  font-size: 0.8rem;
-}
-
-.grid.extra-large-grid .cell-input {
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: clamp(8px, 1vw, 13px);
 }
 
 .cell-input {
@@ -589,6 +578,10 @@ a {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.grid.large-grid .cell-input {
+  font-size: clamp(20px, 2.3vw, 28px);
 }
 
 .cell-input::selection {
@@ -940,9 +933,6 @@ a {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
-  .cell-number {
-    font-size: 0.65rem !important;
-  }
 }
 
 @media (min-width: 1200px) {
@@ -1138,11 +1128,5 @@ a {
   }
   .title {
     text-align: left;
-  }
-}
-
-@media (max-width: 900px) {
-  .cell-number {
-    font-size: 0.8rem;
   }
 }
