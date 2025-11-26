@@ -1155,9 +1155,21 @@ export default function CrosswordGrid({ puzzle }) {
           .eq("puzzle_key", puzzleKey)
           .eq("used_reveal", false)
           .order("elapsed_ms", { ascending: true })
-          .limit(10);
+          .limit(100);
         if (error) throw error;
-        setLeaderboard(data || []);
+
+        // Remove duplicates by name + elapsed_ms combination
+        const uniqueEntries = [];
+        const seen = new Set();
+        for (const entry of data || []) {
+          const key = `${entry.name}:${entry.elapsed_ms}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            uniqueEntries.push(entry);
+          }
+        }
+
+        setLeaderboard(uniqueEntries.slice(0, 10));
       } catch (e) {
         setLbError(String(e.message || e));
       } finally {
