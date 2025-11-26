@@ -45,6 +45,19 @@ export default function CrosswordGrid({ puzzle }) {
     return false;
   });
 
+  const [submitLoading, setSubmitLoading] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState("");
+  const [submitSuccess, setSubmitSuccess] = React.useState(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        return Boolean(saved?.submittedToLeaderboard);
+      }
+    } catch {}
+    return false;
+  });
+
   // Confirmation modal state
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const [confirmationAction, setConfirmationAction] = React.useState(null);
@@ -339,10 +352,15 @@ export default function CrosswordGrid({ puzzle }) {
 
   React.useEffect(() => {
     try {
-      const data = JSON.stringify({ cells, incorrect, usedCheckOrReveal });
+      const data = JSON.stringify({
+        cells,
+        incorrect,
+        usedCheckOrReveal,
+        submittedToLeaderboard: submitSuccess,
+      });
       localStorage.setItem(storageKey, data);
     } catch {}
-  }, [cells, incorrect, usedCheckOrReveal, storageKey]);
+  }, [cells, incorrect, usedCheckOrReveal, submitSuccess, storageKey]);
 
   function focusCell(next) {
     setPos(next);
@@ -1040,6 +1058,7 @@ export default function CrosswordGrid({ puzzle }) {
     setShowCongrats(false);
     setShowSoClose(false);
     soCloseShownRef.current = false;
+    setSubmitSuccess(false);
   }
 
   // Confirmation modal functions
@@ -1104,11 +1123,9 @@ export default function CrosswordGrid({ puzzle }) {
       return "";
     }
   });
-  const [submitLoading, setSubmitLoading] = React.useState(false);
-  const [submitError, setSubmitError] = React.useState("");
-  const [submitSuccess, setSubmitSuccess] = React.useState(false);
 
   async function submitLeaderboard() {
+    if (submitSuccess) return;
     if (!isSupabaseConfigured() || !supabase) return;
     if (usedCheckOrReveal) return;
     const name = (playerName || "").trim().slice(0, 24);
