@@ -1,6 +1,12 @@
 import React from "react";
 import { supabase, isSupabaseConfigured } from "../supabase";
 import MobileKeyboard from "../components/MobileKeyboard";
+import {
+  logCheck,
+  logReveal,
+  logCompletion,
+  setActivePuzzleTitle,
+} from "../hooks/useSessionLogger";
 
 export default function CrosswordGrid({ puzzle }) {
   const rows = puzzle.grid.length;
@@ -138,6 +144,7 @@ export default function CrosswordGrid({ puzzle }) {
   const [showLeaderboard, setShowLeaderboard] = React.useState(false);
   const [showSoClose, setShowSoClose] = React.useState(false);
   const soCloseShownRef = React.useRef(false);
+  const completionLoggedRef = React.useRef(false);
 
   function isSolved() {
     for (let rr = 0; rr < rows; rr += 1) {
@@ -171,9 +178,24 @@ export default function CrosswordGrid({ puzzle }) {
       setTimerRunning(false);
       setShowCongrats(true);
       soCloseShownRef.current = false; // Reset for next puzzle
+      if (!completionLoggedRef.current) {
+        logCompletion({
+          metadata: {
+            puzzleTitle: puzzleTitle || null,
+            elapsedMs,
+            usedCheckOrReveal,
+            method: usedCheckOrReveal ? "solved_with_aid" : "solved_clean",
+          },
+        });
+        completionLoggedRef.current = true;
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cells]);
+
+  React.useEffect(() => {
+    completionLoggedRef.current = false;
+  }, [storageKey]);
 
   // Check if puzzle is fully filled but incorrect
   React.useEffect(() => {
@@ -993,11 +1015,28 @@ export default function CrosswordGrid({ puzzle }) {
   function checkSquare() {
     checkCells([{ r: pos.r, c: pos.c }]);
     setUsedCheckOrReveal(true);
+    logCheck({
+      metadata: {
+        scope: "square",
+        row: pos.r,
+        col: pos.c,
+        direction: dir,
+        clueNumber,
+      },
+    });
   }
 
   function checkWord() {
     checkCells(activePositions);
     setUsedCheckOrReveal(true);
+    logCheck({
+      metadata: {
+        scope: "word",
+        direction: dir,
+        clueNumber,
+        length: activePositions.length,
+      },
+    });
   }
 
   function checkPuzzle() {
@@ -1009,16 +1048,39 @@ export default function CrosswordGrid({ puzzle }) {
     }
     checkCells(all);
     setUsedCheckOrReveal(true);
+    logCheck({
+      metadata: {
+        scope: "puzzle",
+        totalCells: all.length,
+      },
+    });
   }
 
   function revealSquare() {
     revealCells([{ r: pos.r, c: pos.c }]);
     setUsedCheckOrReveal(true);
+    logReveal({
+      metadata: {
+        scope: "square",
+        row: pos.r,
+        col: pos.c,
+        direction: dir,
+        clueNumber,
+      },
+    });
   }
 
   function revealWord() {
     revealCells(activePositions);
     setUsedCheckOrReveal(true);
+    logReveal({
+      metadata: {
+        scope: "word",
+        direction: dir,
+        clueNumber,
+        length: activePositions.length,
+      },
+    });
   }
 
   function revealPuzzle() {
@@ -1030,6 +1092,12 @@ export default function CrosswordGrid({ puzzle }) {
     }
     revealCells(all);
     setUsedCheckOrReveal(true);
+    logReveal({
+      metadata: {
+        scope: "puzzle",
+        totalCells: all.length,
+      },
+    });
     // After reveal-all, consider puzzle complete
     setTimeout(() => {
       setCompleted(true);
@@ -1058,6 +1126,7 @@ export default function CrosswordGrid({ puzzle }) {
     setShowCongrats(false);
     setShowSoClose(false);
     soCloseShownRef.current = false;
+    completionLoggedRef.current = false;
     setSubmitSuccess(false);
   }
 
@@ -1094,6 +1163,13 @@ export default function CrosswordGrid({ puzzle }) {
   );
 
   const puzzleTitle = puzzle.meta?.title || "";
+
+  React.useEffect(() => {
+    setActivePuzzleTitle(puzzleTitle || null);
+    return () => {
+      setActivePuzzleTitle(null);
+    };
+  }, [puzzleTitle]);
 
   // Player identity (per-device) and name persistence
   const getOrCreateClientId = React.useCallback(() => {
