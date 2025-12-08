@@ -1451,7 +1451,9 @@ export default function CrosswordGrid({ puzzle }) {
           </div>
         </div>
         <div
-          className={`grid ${rows > 10 || cols > 10 ? "large-grid" : ""}`}
+          className={`grid ${rows > 10 || cols > 10 ? "large-grid" : ""} ${
+            rows >= 15 || cols >= 15 ? "extra-large-grid" : ""
+          }`}
           style={{
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridTemplateRows: `repeat(${rows}, 1fr)`,

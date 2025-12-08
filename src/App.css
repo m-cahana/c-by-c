@@ -524,6 +524,9 @@ a {
 .cell {
   background: var(--cell-background-color);
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .cell.block {
@@ -561,9 +564,12 @@ a {
   font-size: clamp(8px, 1vw, 13px);
 }
 
+.grid.extra-large-grid .cell-number {
+  font-size: clamp(6px, 1vw, 12px);
+}
+
 .cell-input {
   width: 100%;
-  height: 100%;
   border: none;
   outline: none;
   text-transform: uppercase;
@@ -574,14 +580,18 @@ a {
   caret-color: transparent; /* hide blinking text cursor */
   padding: 0;
   margin: 0;
-  vertical-align: middle;
+  vertical-align: bottom;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
 
 .grid.large-grid .cell-input {
-  font-size: clamp(20px, 2.3vw, 28px);
+  font-size: clamp(16px, 2.3vw, 28px);
+}
+
+.grid.extra-large-grid .cell-input {
+  font-size: clamp(12px, 2vw, 22px);
 }
 
 .cell-input::selection {
