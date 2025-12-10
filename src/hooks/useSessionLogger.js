@@ -129,16 +129,93 @@ async function fetchLocationFromIP() {
   return locationFetchPromise;
 }
 
+function getDeviceInfo() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return null;
+  }
+
+  const userAgent = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+
+  // Detect device type
+  let deviceType = "desktop";
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      userAgent
+    );
+  const isTablet =
+    /iPad|Android/i.test(userAgent) && !/Mobile/i.test(userAgent);
+
+  if (isMobile) {
+    deviceType = "mobile";
+  } else if (isTablet) {
+    deviceType = "tablet";
+  }
+
+  // Detect OS
+  let os = "unknown";
+  if (/Windows/i.test(userAgent)) {
+    os = "Windows";
+  } else if (/Mac/i.test(userAgent) || /Macintosh/i.test(userAgent)) {
+    os = "macOS";
+  } else if (/Linux/i.test(userAgent)) {
+    os = "Linux";
+  } else if (/Android/i.test(userAgent)) {
+    os = "Android";
+  } else if (/iOS|iPhone|iPad|iPod/i.test(userAgent)) {
+    os = "iOS";
+  }
+
+  // Detect browser
+  let browser = "unknown";
+  if (/Chrome/i.test(userAgent) && !/Edg|OPR/i.test(userAgent)) {
+    browser = "Chrome";
+  } else if (/Firefox/i.test(userAgent)) {
+    browser = "Firefox";
+  } else if (/Safari/i.test(userAgent) && !/Chrome/i.test(userAgent)) {
+    browser = "Safari";
+  } else if (/Edg/i.test(userAgent)) {
+    browser = "Edge";
+  } else if (/OPR/i.test(userAgent)) {
+    browser = "Opera";
+  }
+
+  // Get screen dimensions
+  const screenWidth = window.screen?.width || null;
+  const screenHeight = window.screen?.height || null;
+  const windowWidth = window.innerWidth || null;
+  const windowHeight = window.innerHeight || null;
+
+  return {
+    device_type: deviceType,
+    os,
+    browser,
+    platform: platform || null,
+    screen_width: screenWidth,
+    screen_height: screenHeight,
+    window_width: windowWidth,
+    window_height: windowHeight,
+    user_agent: userAgent,
+  };
+}
+
 async function enrichMetadataWithLocation(metadata) {
   try {
     const location = await fetchLocationFromIP();
+    const device = getDeviceInfo();
     return {
       ...metadata,
       location,
+      device,
     };
   } catch (error) {
     console.warn("Failed to enrich metadata with location", error);
-    return metadata;
+    // Still try to add device info even if location fails
+    const device = getDeviceInfo();
+    return {
+      ...metadata,
+      device,
+    };
   }
 }
 
