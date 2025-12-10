@@ -9,6 +9,8 @@ let inMemorySessionStarted = false;
 let currentPuzzleTitle = null;
 let pendingPageVisit = null;
 let pendingPageVisitTimeout = null;
+let cachedLocation = null;
+let locationFetchPromise = null;
 
 function generateId() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -80,6 +82,66 @@ function markSessionStartLogged() {
   }
 }
 
+async function fetchLocationFromIP() {
+  // Return cached location if available
+  if (cachedLocation) {
+    return cachedLocation;
+  }
+
+  // If a fetch is already in progress, return that promise
+  if (locationFetchPromise) {
+    return locationFetchPromise;
+  }
+
+  // Start fetching location
+  locationFetchPromise = (async () => {
+    try {
+      // Use ipapi.co which is free and doesn't require an API key
+      const response = await fetch("https://ipapi.co/json/");
+      if (!response.ok) throw new Error("Failed to fetch location");
+
+      const data = await response.json();
+
+      // Extract relevant location information
+      const location = {
+        country: data.country_name || null,
+        country_code: data.country_code || null,
+        region: data.region || null,
+        city: data.city || null,
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
+        timezone: data.timezone || null,
+      };
+
+      // Cache the result
+      cachedLocation = location;
+      return location;
+    } catch (error) {
+      console.warn("Failed to fetch location from IP", error);
+      // Cache null to avoid repeated failed requests
+      cachedLocation = { error: "Unable to determine location" };
+      return cachedLocation;
+    } finally {
+      locationFetchPromise = null;
+    }
+  })();
+
+  return locationFetchPromise;
+}
+
+async function enrichMetadataWithLocation(metadata) {
+  try {
+    const location = await fetchLocationFromIP();
+    return {
+      ...metadata,
+      location,
+    };
+  } catch (error) {
+    console.warn("Failed to enrich metadata with location", error);
+    return metadata;
+  }
+}
+
 export function setActivePuzzleTitle(title) {
   currentPuzzleTitle = title || null;
   flushPendingPageVisit(false);
@@ -138,13 +200,19 @@ export function useSessionLogger(location) {
     if (!startLoggedRef.current && !hasLoggedSessionStart()) {
       startLoggedRef.current = true;
       markSessionStartLogged();
-      logEvent("session_start", {
-        path: initialPath,
-        metadata:
+      (async () => {
+        const baseMetadata =
           typeof window !== "undefined"
             ? { href: window.location.href }
-            : undefined,
-      });
+            : undefined;
+        const enrichedMetadata = baseMetadata
+          ? await enrichMetadataWithLocation(baseMetadata)
+          : undefined;
+        logEvent("session_start", {
+          path: initialPath,
+          metadata: enrichedMetadata,
+        });
+      })();
     }
 
     const endSession = () => {
@@ -155,13 +223,19 @@ export function useSessionLogger(location) {
         (typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : initialPath);
-      logEvent("session_end", {
-        path,
-        metadata:
+      (async () => {
+        const baseMetadata =
           typeof window !== "undefined"
             ? { href: window.location.href }
-            : undefined,
-      });
+            : undefined;
+        const enrichedMetadata = baseMetadata
+          ? await enrichMetadataWithLocation(baseMetadata)
+          : undefined;
+        logEvent("session_end", {
+          path,
+          metadata: enrichedMetadata,
+        });
+      })();
     };
 
     const handleVisibilityChange = () => {
@@ -215,13 +289,16 @@ function flushPendingPageVisit(force) {
   logEvent("page_visit", payload);
 }
 
-function schedulePageVisit(path) {
+async function schedulePageVisit(path) {
   if (pendingPageVisit) {
     flushPendingPageVisit(true);
   }
 
-  const metadata =
+  const baseMetadata =
     typeof window !== "undefined" ? { href: window.location.href } : undefined;
+  const metadata = baseMetadata
+    ? await enrichMetadataWithLocation(baseMetadata)
+    : undefined;
 
   pendingPageVisit = { path, metadata };
 
