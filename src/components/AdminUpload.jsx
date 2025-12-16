@@ -61,13 +61,26 @@ export default function AdminUpload({ onUploaded }) {
         setStatus("Supabase not configured");
         return;
       }
+
+      // Validate file type
+      const fileName = file.name.toLowerCase();
+      const isPuz = fileName.endsWith(".puz");
+      const isIpuz = fileName.endsWith(".ipuz");
+
+      if (!isPuz && !isIpuz) {
+        setStatus("Error: Only .puz and .ipuz files are supported");
+        return;
+      }
+
       setStatus("Uploading…");
-      const fileName = file.name;
+      const contentType = isIpuz
+        ? "application/json"
+        : "application/octet-stream";
       const { error } = await supabase.storage
         .from("puzzles")
-        .upload(fileName, file, {
+        .upload(file.name, file, {
           upsert: true,
-          contentType: "application/octet-stream",
+          contentType,
         });
       if (error) throw error;
       setStatus("Uploaded.");
@@ -130,9 +143,14 @@ export default function AdminUpload({ onUploaded }) {
         <div className="admin-actions">
           <label className="admin-label">
             <span className="admin-button admin-button--primary">
-              Upload .puz
+              Upload .puz or .ipuz
             </span>
-            <input type="file" accept=".puz" onChange={onInputChange} hidden />
+            <input
+              type="file"
+              accept=".puz,.ipuz"
+              onChange={onInputChange}
+              hidden
+            />
           </label>
           <button
             className="admin-button admin-button--secondary"
