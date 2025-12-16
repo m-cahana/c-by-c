@@ -24,15 +24,25 @@ async function fetchLatestSupabasePuz() {
   if (error) throw error;
   if (!data || data.length === 0) return null;
   const candidates = data
-    .filter((f) => f.name && f.name.toLowerCase().endsWith(".puz"))
+    .filter(
+      (f) =>
+        f.name &&
+        (f.name.toLowerCase().endsWith(".puz") ||
+          f.name.toLowerCase().endsWith(".ipuz"))
+    )
     .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
   const latest = candidates[0] || data[0];
   const { data: file, error: dlError } = await supabase.storage
     .from("puzzles")
     .download(latest.name);
   if (dlError) throw dlError;
-  const arrayBuffer = await file.arrayBuffer();
-  return { arrayBuffer, name: latest.name };
+  if (latest.name.toLowerCase().endsWith(".ipuz")) {
+    const text = await file.text();
+    return { text, name: latest.name, isIpuz: true };
+  } else {
+    const arrayBuffer = await file.arrayBuffer();
+    return { arrayBuffer, name: latest.name, isIpuz: false };
+  }
 }
 
 async function fetchAllSupabasePuzzles() {
@@ -43,7 +53,12 @@ async function fetchAllSupabasePuzzles() {
   if (error) throw error;
   if (!data || data.length === 0) return [];
   return data
-    .filter((f) => f.name && f.name.toLowerCase().endsWith(".puz"))
+    .filter(
+      (f) =>
+        f.name &&
+        (f.name.toLowerCase().endsWith(".puz") ||
+          f.name.toLowerCase().endsWith(".ipuz"))
+    )
     .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
 }
 
@@ -53,8 +68,49 @@ async function fetchSpecificSupabasePuzzle(puzzleName) {
     .from("puzzles")
     .download(puzzleName);
   if (error) throw error;
-  const arrayBuffer = await file.arrayBuffer();
-  return { arrayBuffer, name: puzzleName };
+  if (puzzleName.toLowerCase().endsWith(".ipuz")) {
+    const text = await file.text();
+    return { text, name: puzzleName, isIpuz: true };
+  } else {
+    const arrayBuffer = await file.arrayBuffer();
+    return { arrayBuffer, name: puzzleName, isIpuz: false };
+  }
+}
+
+function convertIpuzToPuzzle(ipuzData) {
+  // Convert .ipuz format to the format expected by CrosswordGrid
+  const grid = ipuzData.solution.map((row) =>
+    row.map((cell) => (cell === "#" ? "." : cell))
+  );
+
+  // Convert clues from array format to object format
+  const cluesAcross = {};
+  const cluesDown = {};
+
+  if (ipuzData.clues?.Across) {
+    ipuzData.clues.Across.forEach(([number, clue]) => {
+      cluesAcross[number] = clue;
+    });
+  }
+
+  if (ipuzData.clues?.Down) {
+    ipuzData.clues.Down.forEach(([number, clue]) => {
+      cluesDown[number] = clue;
+    });
+  }
+
+  return {
+    grid,
+    clues: {
+      across: cluesAcross,
+      down: cluesDown,
+    },
+    meta: {
+      title: ipuzData.title || "",
+      author: ipuzData.author || "",
+      copyright: ipuzData.copyright || "",
+    },
+  };
 }
 
 function useLatestPuzzle(fallbackUrl) {
@@ -74,19 +130,26 @@ function useLatestPuzzle(fallbackUrl) {
         // Check if we're loading a specific puzzle from URL
         const isTitlePrefix = fallbackUrl.startsWith("/titleprefix/");
         const isSpecificPuzzle = fallbackUrl.startsWith("/puzzles/");
+
         if (isTitlePrefix) {
           const targetPrefix = fallbackUrl.replace("/titleprefix/", "");
           try {
             const puzzleList = await fetchAllSupabasePuzzles();
             for (const puzzleFile of puzzleList) {
               try {
-                const { arrayBuffer } = await fetchSpecificSupabasePuzzle(
+                const puzzleData = await fetchSpecificSupabasePuzzle(
                   puzzleFile.name
                 );
-                const decodedCandidate = decode(arrayBuffer);
+                let decodedCandidate;
+                if (puzzleData.isIpuz) {
+                  const ipuzData = JSON.parse(puzzleData.text);
+                  decodedCandidate = convertIpuzToPuzzle(ipuzData);
+                } else {
+                  decodedCandidate = decode(puzzleData.arrayBuffer);
+                }
                 const candidateTitle =
                   decodedCandidate.meta?.title ||
-                  puzzleFile.name.replace(".puz", "");
+                  puzzleFile.name.replace(/\.(puz|ipuz)$/, "");
                 const candidatePrefix = candidateTitle.split(":")[0].trim();
                 if (candidatePrefix === targetPrefix) {
                   decoded = decodedCandidate;
@@ -100,26 +163,46 @@ function useLatestPuzzle(fallbackUrl) {
           try {
             const specific = await fetchSpecificSupabasePuzzle(puzzleName);
             if (specific) {
-              decoded = decode(specific.arrayBuffer);
+              if (specific.isIpuz) {
+                const ipuzData = JSON.parse(specific.text);
+                decoded = convertIpuzToPuzzle(ipuzData);
+              } else {
+                decoded = decode(specific.arrayBuffer);
+              }
             }
           } catch (supaErr) {
             console.error("Failed to load specific puzzle:", supaErr);
           }
         } else {
-          // Load latest puzzle
+          // Load latest puzzle from Supabase
           try {
             const latest = await fetchLatestSupabasePuz();
             if (latest) {
-              decoded = decode(latest.arrayBuffer);
+              if (latest.isIpuz) {
+                const ipuzData = JSON.parse(latest.text);
+                decoded = convertIpuzToPuzzle(ipuzData);
+              } else {
+                decoded = decode(latest.arrayBuffer);
+              }
             }
           } catch (supaErr) {}
         }
 
+        // Fallback to local file if Supabase didn't provide a puzzle
         if (!decoded && !isTitlePrefix && !isSpecificPuzzle) {
           const res = await fetch(fallbackUrl);
           if (!res.ok) throw new Error(`Failed to load puzzle: ${res.status}`);
-          const arrayBuffer = await res.arrayBuffer();
-          decoded = decode(arrayBuffer);
+
+          if (fallbackUrl.endsWith(".ipuz")) {
+            // Parse .ipuz as JSON
+            const text = await res.text();
+            const ipuzData = JSON.parse(text);
+            decoded = convertIpuzToPuzzle(ipuzData);
+          } else {
+            // Parse .puz as binary
+            const arrayBuffer = await res.arrayBuffer();
+            decoded = decode(arrayBuffer);
+          }
         }
         if (!cancelled) setPuzzle(decoded);
       } catch (e) {
@@ -239,21 +322,28 @@ function Archive() {
         const puzzlesWithTitles = await Promise.all(
           puzzleList.map(async (puzzleFile) => {
             try {
-              const { arrayBuffer } = await fetchSpecificSupabasePuzzle(
+              const puzzleData = await fetchSpecificSupabasePuzzle(
                 puzzleFile.name
               );
-              const { decode } = require("puzjs");
-              const decoded = decode(arrayBuffer);
+              let decoded;
+              if (puzzleData.isIpuz) {
+                const ipuzData = JSON.parse(puzzleData.text);
+                decoded = convertIpuzToPuzzle(ipuzData);
+              } else {
+                const { decode } = require("puzjs");
+                decoded = decode(puzzleData.arrayBuffer);
+              }
               return {
                 ...puzzleFile,
                 title:
-                  decoded.meta?.title || puzzleFile.name.replace(".puz", ""),
+                  decoded.meta?.title ||
+                  puzzleFile.name.replace(/\.(puz|ipuz)$/, ""),
               };
             } catch (e) {
               // If decoding fails, fall back to filename
               return {
                 ...puzzleFile,
-                title: puzzleFile.name.replace(".puz", ""),
+                title: puzzleFile.name.replace(/\.(puz|ipuz)$/, ""),
               };
             }
           })
