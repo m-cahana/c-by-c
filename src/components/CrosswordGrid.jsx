@@ -8,6 +8,16 @@ import {
   setActivePuzzleTitle,
 } from "../hooks/useSessionLogger";
 
+// Helper function to decode HTML entities in clue text
+function decodeHtmlEntities(text) {
+  if (!text) return text;
+  // Use the browser's built-in decoder via a temporary element
+  // This handles all HTML entities like &amp;, &lt;, &gt;, etc.
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 export default function CrosswordGrid({ puzzle }) {
   const rows = puzzle.grid.length;
   const cols = puzzle.grid[0].length;
@@ -1522,7 +1532,9 @@ export default function CrosswordGrid({ puzzle }) {
             >
               ‹
             </button>
-            <span className="clue-text">{currentEntry?.clue || ""}</span>
+            <span className="clue-text">
+              {decodeHtmlEntities(currentEntry?.clue || "")}
+            </span>
             <button
               className="clue-nav-arrow clue-nav-arrow-right"
               onClick={goToNextClue}
@@ -1851,7 +1863,8 @@ function ClueList({ title, entries, currentNumber, onSelect }) {
             className={e.number === currentNumber ? "clue selected" : "clue"}
             onClick={() => onSelect(e.number)}
           >
-            <span className="clue-number">{e.number}.</span> {e.clue}
+            <span className="clue-number">{e.number}.</span>{" "}
+            {decodeHtmlEntities(e.clue)}
           </li>
         ))}
       </ul>
