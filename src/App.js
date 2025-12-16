@@ -9,12 +9,10 @@ import {
   Route,
   Link,
   useParams,
-  useLocation,
 } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
 import { Analytics } from "@vercel/analytics/react";
 import "./App.css";
-import { useSessionLogger } from "./hooks/useSessionLogger";
 
 async function fetchLatestSupabasePuz() {
   if (!isSupabaseConfigured() || !supabase) return null;
@@ -222,12 +220,6 @@ function useLatestPuzzle(fallbackUrl) {
   }
 
   return { puzzle, error, loading, reload };
-}
-
-function SessionLogger() {
-  const location = useLocation();
-  useSessionLogger(location);
-  return null;
 }
 
 function MainPage() {
@@ -493,7 +485,6 @@ function App() {
 
   return (
     <BrowserRouter>
-      <SessionLogger />
       {showLoadingAnimation && (
         <LoadingAnimation
           onComplete={handleAppLoadingComplete}
