@@ -1456,7 +1456,7 @@ export default function CrosswordGrid({ puzzle }) {
             >
               ‹
             </button>
-            <span className="clue-text">
+            <span className="clue-text" onClick={toggleDir}>
               {decodeHtmlEntities(currentEntry?.clue || "")}
             </span>
             <button
