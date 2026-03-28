@@ -1019,7 +1019,11 @@ a {
   display: flex;
   align-items: center;
   justify-content: right;
-  grid-row: 1;
+  position: sticky;
+  top: 100px;
+  align-self: start;
+  z-index: 10;
+  grid-row: 1 / -1;
   grid-column: 1;
 }
 

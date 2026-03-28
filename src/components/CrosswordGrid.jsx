@@ -968,7 +968,7 @@ export default function CrosswordGrid({ puzzle }) {
     return list.find((e) => e.number === clueNumber) || null;
   }, [dir, clueNumber, numbering]);
 
-  function checkCells(positions) {
+  function checkCells(positions, { includeEmpty = false } = {}) {
     const nextIncorrect = incorrect.map((row) => row.slice());
     positions.forEach(({ r, c }) => {
       const sol =
@@ -976,7 +976,9 @@ export default function CrosswordGrid({ puzzle }) {
           ? puzzle.grid[r][c]
           : puzzle.grid[r][c]?.solution || "";
       const val = cells[r][c] || "";
-      nextIncorrect[r][c] = val !== "" && val !== sol.toUpperCase();
+      nextIncorrect[r][c] = includeEmpty
+        ? val !== sol.toUpperCase()
+        : val !== "" && val !== sol.toUpperCase();
     });
     setIncorrect(nextIncorrect);
   }
@@ -1038,7 +1040,20 @@ export default function CrosswordGrid({ puzzle }) {
         if (puzzle.grid[rr][cc] !== ".") all.push({ r: rr, c: cc });
       }
     }
-    revealCells(all);
+    // Mark incorrect/empty cells before revealing, so the coloring persists
+    checkCells(all, { includeEmpty: true });
+    // Reveal all answers but keep incorrect flags
+    setCells((prev) => {
+      const next = prev.map((row) => row.slice());
+      all.forEach(({ r, c }) => {
+        const sol =
+          typeof puzzle.grid[r][c] === "string"
+            ? puzzle.grid[r][c]
+            : puzzle.grid[r][c]?.solution || "";
+        next[r][c] = sol.toUpperCase();
+      });
+      return next;
+    });
     setUsedCheckOrReveal(true);
     // After reveal-all, consider puzzle complete
     setTimeout(() => {
