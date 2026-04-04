@@ -121,3 +121,32 @@
     width: auto;
   }
 }
+
+@media (max-width: 712px) {
+  .puzzle-list {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .archive-header-inner {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .archive-header-inner .archive-logo-inline {
+    align-self: center;
+  }
+
+  .archive-header-text {
+    max-width: none;
+    flex: none;
+    width: 100%;
+  }
+
+  .archive-credits {
+    text-align: left;
+    flex-basis: auto;
+    width: 100%;
+  }
+}
