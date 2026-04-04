@@ -9,10 +9,6 @@
 }
 
 .archive-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--website-background-color);
   padding: 40px 0 30px;
   display: flex;
   justify-content: center;
