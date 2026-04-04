@@ -125,6 +125,16 @@
   }
 }
 
+@media (max-width: 512px) {
+  .puzzle-list {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+
+  .puzzle-link {
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .archive-header-inner {
     flex-direction: column;
@@ -150,5 +160,26 @@
     text-align: left;
     flex-basis: auto;
     width: 100%;
+  }
+
+  .puzzle-list {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  }
+
+  .puzzle-link {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .archive-layout {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .archive-header {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
