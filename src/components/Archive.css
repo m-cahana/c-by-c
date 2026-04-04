@@ -97,7 +97,7 @@
 
 .puzzle-link-title {
   overflow-wrap: break-word;
-  hyphens: auto;
+  hyphens: none;
 }
 
 .puzzle-item:hover .puzzle-link {
@@ -122,6 +122,12 @@
 @media (max-width: 712px) {
   .puzzle-list {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .archive-header-inner .archive-logo-inline {
+    margin-top: 20px;
   }
 }
 
