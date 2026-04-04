@@ -12,7 +12,7 @@ function decodeHtmlEntities(text) {
   return textarea.value;
 }
 
-export default function CrosswordGrid({ puzzle }) {
+export default function CrosswordGrid({ puzzle, themedClues }) {
   const rows = puzzle.grid.length;
   const cols = puzzle.grid[0].length;
   const numbering = React.useMemo(() => computeNumbering(puzzle), [puzzle]);
@@ -968,6 +968,25 @@ export default function CrosswordGrid({ puzzle }) {
     return list.find((e) => e.number === clueNumber) || null;
   }, [dir, clueNumber, numbering]);
 
+  // Themed clue positions
+  const themedPositions = React.useMemo(() => {
+    if (!themedClues || themedClues.length === 0) return null;
+    const positions = new Set();
+    for (const tc of themedClues) {
+      const list = tc.direction === "across" ? numbering.across : numbering.down;
+      const entry = list.find((e) => e.number === tc.number);
+      if (entry) {
+        entry.positions.forEach((p) => positions.add(`${p.r},${p.c}`));
+      }
+    }
+    return positions;
+  }, [themedClues, numbering]);
+
+  const isCurrentClueThemed = React.useMemo(() => {
+    if (!themedClues || themedClues.length === 0) return false;
+    return themedClues.some((tc) => tc.direction === dir && tc.number === clueNumber);
+  }, [themedClues, dir, clueNumber]);
+
   function checkCells(positions, { includeEmpty = false } = {}) {
     const nextIncorrect = incorrect.map((row) => row.slice());
     positions.forEach(({ r, c }) => {
@@ -1418,12 +1437,15 @@ export default function CrosswordGrid({ puzzle }) {
               const isIncorrect = incorrect[r][c];
               const isCurrent = !isBlock && pos.r === r && pos.c === c;
 
+              const isThemed = themedPositions && themedPositions.has(`${r},${c}`);
+
               let cellClass = "cell";
               if (isBlock) cellClass += " block";
               else {
                 if (isActive) cellClass += " active";
                 if (isIncorrect) cellClass += " incorrect";
                 if (isCurrent) cellClass += " current";
+                if (isCurrentClueThemed && isThemed && !isActive) cellClass += " themed";
               }
 
               return (

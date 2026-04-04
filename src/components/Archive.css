@@ -1,0 +1,123 @@
+/* Archive page styles */
+.archive-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 0;
+}
+
+.archive-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--website-background-color);
+  padding: 40px 0 20px;
+  display: flex;
+  justify-content: center;
+  margin-left: -40px;
+  margin-right: -40px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.archive-header-inner {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.archive-header-text {
+  flex: 1;
+  min-width: 0;
+  max-width: 1000px;
+}
+
+.archive-header-inner .archive-logo-inline {
+  height: 80px;
+  width: auto;
+  margin: 0;
+  align-self: flex-start;
+}
+
+.archive-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-color);
+  margin: 0;
+  text-align: left;
+}
+
+.archive-credits {
+  font-style: italic;
+  flex-basis: 100%;
+  margin-top: -8px; /* offset the 24px gap */
+}
+
+.archive-logo-inline {
+  height: 200px;
+  width: auto;
+  vertical-align: bottom;
+  margin: 0 0.5em;
+}
+
+.archive-title {
+  font-size: 24px;
+  font-weight: 700;
+  font-style: italic;
+  margin-top: 0;
+  text-decoration: underline;
+}
+
+.puzzle-list {
+  list-style: none;
+  padding-left: 0;
+  padding-top: 0px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  row-gap: 16px;
+  column-gap: 0px;
+}
+
+.puzzle-item {
+  margin-bottom: 0;
+}
+
+.puzzle-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.puzzle-link-title {
+  word-break: break-word;
+}
+
+.puzzle-item:hover .puzzle-link {
+  color: var(--lighter-color);
+}
+
+.puzzle-item:hover .puzzle-link-title {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .archive-layout {
+    padding-top: 20px;
+  }
+
+  .archive-logo-inline {
+    height: 130px;
+    width: auto;
+  }
+}

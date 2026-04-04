@@ -11,8 +11,24 @@ import {
   useParams,
 } from "react-router-dom";
 import AdminUpload from "./components/AdminUpload";
+import PuzzleIcon from "./components/PuzzleIcon";
 import { Analytics } from "@vercel/analytics/react";
 import "./App.css";
+import "./components/Archive.css";
+
+async function fetchPuzzleMeta(puzzleName) {
+  if (!isSupabaseConfigured() || !supabase) return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from("puzzles")
+      .download(`${puzzleName}.meta.json`);
+    if (error || !data) return null;
+    const text = await data.text();
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
 
 async function fetchLatestSupabasePuz() {
   if (!isSupabaseConfigured() || !supabase) return null;
@@ -34,12 +50,13 @@ async function fetchLatestSupabasePuz() {
     .from("puzzles")
     .download(latest.name);
   if (dlError) throw dlError;
+  const meta = await fetchPuzzleMeta(latest.name);
   if (latest.name.toLowerCase().endsWith(".ipuz")) {
     const text = await file.text();
-    return { text, name: latest.name, isIpuz: true };
+    return { text, name: latest.name, isIpuz: true, meta };
   } else {
     const arrayBuffer = await file.arrayBuffer();
-    return { arrayBuffer, name: latest.name, isIpuz: false };
+    return { arrayBuffer, name: latest.name, isIpuz: false, meta };
   }
 }
 
@@ -66,12 +83,13 @@ async function fetchSpecificSupabasePuzzle(puzzleName) {
     .from("puzzles")
     .download(puzzleName);
   if (error) throw error;
+  const meta = await fetchPuzzleMeta(puzzleName);
   if (puzzleName.toLowerCase().endsWith(".ipuz")) {
     const text = await file.text();
-    return { text, name: puzzleName, isIpuz: true };
+    return { text, name: puzzleName, isIpuz: true, meta };
   } else {
     const arrayBuffer = await file.arrayBuffer();
-    return { arrayBuffer, name: puzzleName, isIpuz: false };
+    return { arrayBuffer, name: puzzleName, isIpuz: false, meta };
   }
 }
 
@@ -124,6 +142,7 @@ function useLatestPuzzle(fallbackUrl) {
         setLoading(true);
         const { decode } = require("puzjs");
         let decoded = null;
+        let themedClues = null;
 
         // Check if we're loading a specific puzzle from URL
         const isTitlePrefix = fallbackUrl.startsWith("/titleprefix/");
@@ -151,6 +170,7 @@ function useLatestPuzzle(fallbackUrl) {
                 const candidatePrefix = candidateTitle.split(":")[0].trim();
                 if (candidatePrefix === targetPrefix) {
                   decoded = decodedCandidate;
+                  themedClues = puzzleData.meta?.themedClues || null;
                   break;
                 }
               } catch (e) {}
@@ -167,6 +187,7 @@ function useLatestPuzzle(fallbackUrl) {
               } else {
                 decoded = decode(specific.arrayBuffer);
               }
+              themedClues = specific.meta?.themedClues || null;
             }
           } catch (supaErr) {
             console.error("Failed to load specific puzzle:", supaErr);
@@ -182,6 +203,7 @@ function useLatestPuzzle(fallbackUrl) {
               } else {
                 decoded = decode(latest.arrayBuffer);
               }
+              themedClues = latest.meta?.themedClues || null;
             }
           } catch (supaErr) {}
         }
@@ -202,7 +224,12 @@ function useLatestPuzzle(fallbackUrl) {
             decoded = decode(arrayBuffer);
           }
         }
-        if (!cancelled) setPuzzle(decoded);
+        if (!cancelled) {
+          if (decoded && themedClues) {
+            decoded.themedClues = themedClues;
+          }
+          setPuzzle(decoded);
+        }
       } catch (e) {
         if (!cancelled) setError(e);
       } finally {
@@ -264,7 +291,7 @@ function MainPage() {
     <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
       <div className="App">
         <div className="content-top">
-          <CrosswordGrid puzzle={puzzle} />
+          <CrosswordGrid puzzle={puzzle} themedClues={puzzle?.themedClues} />
         </div>
       </div>
     </div>
@@ -384,57 +411,57 @@ function Archive() {
     <div className={`app-content ${showContent ? "fade-in" : "fade-out"}`}>
       <div className="App">
         <div className="archive-layout">
-          <div className="archive-left">
-            <h1 className="title">
+          <div className="archive-header">
+            <div className="archive-header-inner">
               <img
                 src="/logos/blue_yellow_boxy_logo.png"
                 alt="Charlie"
                 className="archive-logo-inline"
               />
-            </h1>
+              <div className="archive-header-text">
+              <p className="archive-text">
+                Crosswords by Charlie aims to infuse the stuffy world of crossword
+                solving with topical clues from contemporary fashion, pop culture,
+                and art. Check out the{" "}
+                <a
+                  href="https://crosswordsbycharlie.substack.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  weekly newsletter
+                </a>{" "}
+                to get each puzzle (and solving tips) and chat about the latest
+                puzzles with me on{" "}
+                <a
+                  href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  IG
+                </a>
+                .
+              </p>
+              </div>
+              <p className="archive-credits">
+                Web design and development by{" "}
+                <a
+                  href="https://michaelcahana.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Michael Cahana
+                </a>{" "}
+                | Logo by{" "}
+                <a
+                  href="https://www.instagram.com/yourboiclem/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Clement Condat
+                </a>
+              </p>
+            </div>
           </div>
-
-          <div className="archive-right">
-            <p className="archive-text">
-              Crosswords by Charlie aims to infuse the stuffy world of crossword
-              solving with topical clues from contemporary fashion, pop culture,
-              and art. Check out the{" "}
-              <a
-                href="https://crosswordsbycharlie.substack.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                weekly newsletter
-              </a>{" "}
-              to get each puzzle (and solving tips) and chat about the latest
-              puzzles with me on{" "}
-              <a
-                href="https://www.instagram.com/charqkol?igsh=N2g2MWU2eWljdTVu&utm_source=qr"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                IG
-              </a>
-              .
-            </p>
-            <p className="archive-credits">
-              Web design and development by{" "}
-              <a
-                href="https://michaelcahana.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Michael Cahana
-              </a>{" "}
-              | Logo by{" "}
-              <a
-                href="https://www.instagram.com/yourboiclem/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Clement Condat
-              </a>
-            </p>
             {puzzles.length === 0 ? (
               <p>No puzzles found.</p>
             ) : (
@@ -452,13 +479,13 @@ function Archive() {
                       }
                       className="puzzle-link"
                     >
-                      {puzzle.title}
+                      <PuzzleIcon number={puzzles.length - index} />
+                      <span className="puzzle-link-title">{puzzle.title.includes(":") ? puzzle.title.split(":").slice(1).join(":").trim() : puzzle.title}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
             )}
-          </div>
         </div>
       </div>
     </div>

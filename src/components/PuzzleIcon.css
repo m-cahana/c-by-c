@@ -1,0 +1,24 @@
+.puzzle-icon {
+  display: grid;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border: 1px solid black;
+}
+
+.puzzle-icon-cell {
+  background: var(--lighter-color);
+  border: 0.5px solid black;
+}
+
+.puzzle-icon-cell.dark {
+  background: var(--icon-color);
+}
+
+.puzzle-item:hover .puzzle-icon-cell {
+  background: var(--icon-color);
+}
+
+.puzzle-item:hover .puzzle-icon-cell.dark {
+  background: var(--lighter-color);
+}
