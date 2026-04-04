@@ -100,7 +100,8 @@
 }
 
 .puzzle-link-title {
-  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .puzzle-item:hover .puzzle-link {
